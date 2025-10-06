@@ -1,0 +1,21 @@
+# Ignorar la carpeta del entorno virtual
+envSisGes/
+
+# Ignorar archivos de configuración de Python
+*.pyc
+__pycache__/
+
+# Ignorar archivos de configuración de IDEs
+.idea/
+.vscode/
+
+# Ignorar archivos de base de datos
+*.sqlite3
+
+# Ignorar archivos de migraciones
+*/migrations/*.py
+*/migrations/*.pyc
+*/migrations/__init__.py
+
+# Ignorar archivos de entorno
+.env
