@@ -1,21 +1,22 @@
 from django.db import models
-from ..categorias.models import categoria
-from ..proveedores.models import proveedor
+from categorias.models import Categoria
+from proveedores.models import Proveedor
 
 
 # Create your models here.
-class producto(models.Model):
+class Producto(models.Model):
     nombre = models.CharField(max_length=255)
-    descripcion = models.CharField(max_length=255)
-    precio = models.DecimalField()
+    descripcion = models.TextField()
+    precio = models.DecimalField(max_digits=10, decimal_places=3)
     stock = models.IntegerField()
-    fecha_creacion = models.DateTimeField()
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
     categoria = models.ForeignKey(
-        categoria,
+        Categoria,
         on_delete=models.CASCADE
     )
     proveedor = models.ForeignKey(
-        proveedor,
+        Proveedor,
+        null=True,
         on_delete=models.SET_NULL
     )
 

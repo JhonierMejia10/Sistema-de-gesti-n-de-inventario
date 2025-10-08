@@ -1,5 +1,5 @@
 from django.db import models
-from ..productos.models import producto
+from productos.models import Producto
 from django.contrib.auth.models import User
 
 # Create your models here.
@@ -13,11 +13,11 @@ class MovimientoInventario(models.Model):
     ]
 
     producto = models.ForeignKey(
-        producto,
+        Producto,
         on_delete=models.CASCADE
     )
-    tipo_movimiento = models.CharField(choices=tipo_movimiento_list, db_index=True)
-    cantidad = models.IntegerField()
+    tipo_movimiento = models.CharField(choices=tipo_movimiento_list, db_index=True, max_length=4)
+    cantidad = models.PositiveIntegerField()
     fecha = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(
         User,

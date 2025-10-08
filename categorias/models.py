@@ -1,6 +1,6 @@
 from django.db import models
 # Create your models here.
 
-class categoria(models.Model):
+class Categoria(models.Model):
     nombre = models.CharField(max_length=255)
     descripcion = models.TextField(blank=True, null=True)
