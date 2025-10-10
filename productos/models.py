@@ -5,10 +5,10 @@ from proveedores.models import Proveedor
 
 # Create your models here.
 class Producto(models.Model):
-    nombre = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=255, db_index=True, null=False)
     descripcion = models.TextField()
-    precio = models.DecimalField(max_digits=10, decimal_places=3)
-    stock = models.IntegerField()
+    precio = models.DecimalField(max_digits=10, decimal_places=3, null=False)
+    stock = models.PositiveIntegerField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     categoria = models.ForeignKey(
         Categoria,

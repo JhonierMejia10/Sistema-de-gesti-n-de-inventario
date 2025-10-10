@@ -8,7 +8,7 @@ class Cliente(models.Model):
         ("Anon","Anónimo")
     ]
 
-    nombre = models.CharField(max_length=100)
-    tipo_cliente = models.CharField(choices=Tipos_clientes, db_index=True, max_length=10)
+    nombre = models.CharField(max_length=100, null=False)
+    tipo_cliente = models.CharField(choices=Tipos_clientes, db_index=True, max_length=10, default='Anon')
     contacto = models.CharField(max_length=50, null=True, blank=True)
     nit = models.IntegerField(null=True, blank=True)

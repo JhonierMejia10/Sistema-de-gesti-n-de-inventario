@@ -21,7 +21,7 @@ class MovimientoInventario(models.Model):
     fecha = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(
         User,
-        on_delete=models.SET_NULL, null=True
+        on_delete=models.CASCADE, null=True
     )
     nota = models.TextField(blank=True, null=True)
 

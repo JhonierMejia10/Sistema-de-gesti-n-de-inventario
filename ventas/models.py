@@ -1,10 +1,15 @@
 from django.db import models
 from clientes.models import Cliente
 from productos.models import Producto
+from django.contrib.auth.models import User
 
 # Create your models here.
 
 class Carrito(models.Model):
+    usuario_creador = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE
+    )
     cliente = models.ForeignKey(
         Cliente,
         on_delete=models.CASCADE
