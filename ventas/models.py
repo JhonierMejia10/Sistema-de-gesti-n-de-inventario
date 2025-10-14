@@ -46,7 +46,7 @@ class OrdenItem(models.Model):
     orden = models.ForeignKey(
         Orden,
         on_delete=models.CASCADE,
-        related_name='orden'
+        related_name='items'
     )
     producto = models.ForeignKey(
         Producto,

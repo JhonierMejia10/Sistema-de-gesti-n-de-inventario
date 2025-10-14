@@ -7,16 +7,16 @@ class MovimientoInventario(models.Model):
     
     #Tipos de movimientos disponibles, se definió una lista con tuplas en primera instancia
     tipo_movimiento_list = [
-        ("In","Entrada"),
-        ("Vent","Orden de venta"),
-        ("Adj","Ajuste")
+        ("Entrada","Entrada"),
+        ("Orden de venta","Orden de venta"),
+        ("Ajuste","Ajuste")
     ]
 
     producto = models.ForeignKey(
         Producto,
         on_delete=models.CASCADE
     )
-    tipo_movimiento = models.CharField(choices=tipo_movimiento_list, db_index=True, max_length=4)
+    tipo_movimiento = models.CharField(choices=tipo_movimiento_list, db_index=True, max_length=15)
     cantidad = models.PositiveIntegerField()
     fecha = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(

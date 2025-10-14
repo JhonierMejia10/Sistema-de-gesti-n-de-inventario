@@ -17,6 +17,7 @@ class Producto(models.Model):
     proveedor = models.ForeignKey(
         Proveedor,
         null=True,
+        blank=True,
         on_delete=models.SET_NULL
     )
 
