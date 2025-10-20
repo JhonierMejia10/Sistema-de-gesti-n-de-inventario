@@ -1,6 +1,10 @@
-from django.urls import path
-from .views import CarritoListCreateAPIView
+from django.urls import path, include
+from rest_framework import routers
+from .views import CarritoViewSet
+
+router = routers.DefaultRouter()
+router.register(r'carrito', CarritoViewSet, basename='carrito')
 
 urlpatterns = [
-    path('carrito', CarritoListCreateAPIView.as_view())
+    path('', include(router.urls))
 ]

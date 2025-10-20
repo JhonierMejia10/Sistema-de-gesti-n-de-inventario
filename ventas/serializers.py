@@ -30,7 +30,8 @@ class CarritoSerializer(serializers.ModelSerializer):
         fields = ['cliente','producto','cantidad','precio_unitario','precio','usuario_creador']
         extra_kwargs = {
             'precio':{'read_only':True},
-            'precio_unitario':{'read_only':True}
+            'precio_unitario':{'read_only':True},
+            'cliente': {'required':True}
         }
 
 
