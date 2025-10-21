@@ -28,18 +28,23 @@ class Carrito(models.Model):
 
 class Orden(models.Model):
     estados = [
-        ("Pen","Pendiente"),
-        ("Abon","Abono"),
-        ("Can","Cancelado")
+        ("Pendiente","Pendiente"),
+        ("Abono","Abono"),
+        ("Cancelado","Cancelado")
     ]
 
     cliente = models.ForeignKey(
         Cliente,
         on_delete=models.CASCADE
     )
-    estado_pago = models.CharField(choices=estados, db_index=True, max_length=4)
+    estado_pago = models.CharField(choices=estados, db_index=True, max_length=9)
     total = models.DecimalField(default=0, max_digits=10, decimal_places=3)
-    fecha = models.DateField(db_index=True)
+    fecha = models.DateField(db_index=True, auto_now_add=True)
+    usuario_creador = models.ForeignKey(
+        User,
+        on_delete=models.CASCADE,
+        related_name='ordenes_creadas'
+    )
 
 
 class OrdenItem(models.Model):
