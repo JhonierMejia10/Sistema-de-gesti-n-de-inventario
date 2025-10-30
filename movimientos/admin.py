@@ -1,4 +1,4 @@
 from django.contrib import admin
-from .models import MovimientoInventario
+from .models import Movimiento
 # Register your models here.
-admin.site.register(MovimientoInventario)
+admin.site.register(Movimiento)

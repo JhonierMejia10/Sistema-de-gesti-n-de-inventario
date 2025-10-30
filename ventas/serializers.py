@@ -15,8 +15,8 @@ class CarritoSerializer(serializers.ModelSerializer):
         data['usuario_creador'] = request.user
         return super().create(data)
 
+
     def validate(self, data):
-        
         producto = data['producto']
         data['precio_unitario'] = producto.precio
         data['precio'] = data['cantidad']* data['precio_unitario']
@@ -44,7 +44,11 @@ class OrdenSerializer(serializers.ModelSerializer):
     ordenitems = OrdenItemSerializer(many=True, read_only = True, source='items') 
     class Meta:
         model = Orden
-        fields = ['cliente','estado_pago','total','fecha','ordenitems']
+        fields = ['cliente','estado_pago','total','fecha','ordenitems','usuario_creador']
+        extra_kwargs = {
+            'usuario_creador': {'read_only':True}
+        }
+
 
     
 
