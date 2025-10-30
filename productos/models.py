@@ -2,8 +2,13 @@ from django.db import models
 from categorias.models import Categoria
 from proveedores.models import Proveedor
 
-
 # Create your models here.
+class Marca(models.Model):
+    nombre = models.CharField(max_length=255, unique=True, db_index=True)
+
+    def __str__(self):
+        return self.nombre
+
 class Producto(models.Model):
     nombre = models.CharField(max_length=255, db_index=True, null=False)
     descripcion = models.TextField()
@@ -20,9 +25,14 @@ class Producto(models.Model):
         blank=True,
         on_delete=models.SET_NULL
     )
+    marca = models.ForeignKey(
+        Marca,
+        null=True,
+        blank=True,
+        on_delete=models.SET_NULL
+    )
 
     def __str__(self):
         return self.nombre
-
 
 

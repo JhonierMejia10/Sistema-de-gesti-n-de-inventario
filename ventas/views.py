@@ -30,6 +30,7 @@ class CarritoViewSet(viewsets.ModelViewSet):
         Carrito.objects.filter(cliente_id=cliente_id).delete()
         return Response({"message": "Carrito vaciado correctamente"})
     
+    
 class OrdenViewSet(viewsets.ModelViewSet):
     queryset = Orden.objects.all()
     serializer_class = OrdenSerializer
@@ -47,8 +48,6 @@ class OrdenViewSet(viewsets.ModelViewSet):
             return Orden.objects.all()
         
         return Orden.objects.none()
-    
-
 
     @action(detail=False, methods=['post'])
     @transaction.atomic
@@ -69,20 +68,18 @@ class OrdenViewSet(viewsets.ModelViewSet):
 
         total = sum(item.precio for item in items_carrito)
 
-        # Crear la orden
         orden_data = {
             'cliente': cliente_id,
             'usuario_creador': request.user.id,
             'total': total,
             'estado_pago': 'Pendiente',
         }
+
         serializer = OrdenSerializer(data=orden_data)
         if not serializer.is_valid():
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
         orden = serializer.save()
 
-        # Crear los ítems de la orden
         for item in items_carrito:
             OrdenItem.objects.create(
                 orden=orden,
@@ -100,6 +97,7 @@ class OrdenViewSet(viewsets.ModelViewSet):
             },
             status=status.HTTP_201_CREATED,
         )
+
 
 class OrdenItemView(viewsets.ReadOnlyModelViewSet):
     queryset = OrdenItem.objects.all()
