@@ -1,13 +1,13 @@
 from rest_framework import serializers
 from categorias.models import Categoria
 from proveedores.models import Proveedor
-from .models import Producto
+from .models import Producto, Marca
 
 class ProductoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Producto
-        fields = ['nombre','descripcion','precio','stock','categoria','proveedor']
+        fields = ['nombre','descripcion','precio','stock','categoria','proveedor','marca']
         read_only_fields = ['id','fecha_creacion']
 
         extra_kwargs = {
@@ -30,4 +30,15 @@ class ProductoSerializer(serializers.ModelSerializer):
         if not Categoria.objects.filter(nombre=validate_data).exists():
             raise serializers.ValidationError("La categoría seleccionada no existe")
         return validate_data
+    
+class MarcaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Marca
+        fields = ['nombre']
+
+    def validate_nombre(self, validate_data):
+        if Marca.objects.filter(nomre = validate_data).exists():
+            raise serializers.ValidationError("Ya existe una marca con este nombre")
+        return validate_data
+
     

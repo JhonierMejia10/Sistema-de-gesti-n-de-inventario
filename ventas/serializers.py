@@ -15,8 +15,8 @@ class CarritoSerializer(serializers.ModelSerializer):
         data['usuario_creador'] = request.user
         return super().create(data)
 
+
     def validate(self, data):
-        
         producto = data['producto']
         data['precio_unitario'] = producto.precio
         data['precio'] = data['cantidad']* data['precio_unitario']
