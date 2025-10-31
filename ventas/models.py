@@ -5,6 +5,13 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
+class EstadoPago(models.Model):
+    nombre = models.CharField(max_length=100, db_index=True, null=False, blank=False)
+    
+    def __str__(self):
+        return self.nombre
+    
+
 class Carrito(models.Model):
     usuario_creador = models.ForeignKey(
         User,
@@ -27,24 +34,23 @@ class Carrito(models.Model):
     
 
 class Orden(models.Model):
-    estados = [
-        ("Pendiente","Pendiente"),
-        ("Abono","Abono"),
-        ("Cancelado","Cancelado")
-    ]
 
     cliente = models.ForeignKey(
         Cliente,
         on_delete=models.CASCADE
     )
-    estado_pago = models.CharField(choices=estados, db_index=True, max_length=9)
-    total = models.DecimalField(default=0, max_digits=10, decimal_places=3)
-    fecha = models.DateField(db_index=True, auto_now_add=True)
+    estado_pago = models.ForeignKey(
+        EstadoPago,
+        on_delete=models.CASCADE
+    )
     usuario_creador = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='ordenes_creadas'
     )
+    total = models.DecimalField(default=0, max_digits=10, decimal_places=3)
+    fecha = models.DateField(db_index=True, auto_now_add=True)
+    
 
 
 class OrdenItem(models.Model):
@@ -63,3 +69,5 @@ class OrdenItem(models.Model):
     #Restricción para que se cree una sola instancia de producto por cada orden
     class Meta:
         unique_together = ('orden','producto')
+
+
