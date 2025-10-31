@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Movimiento, MovimientoItem
+from .models import Movimiento, MovimientoItem, TipoMovimiento
 from django.contrib.auth.models import User
 
 class MovimientoSerializer(serializers.ModelSerializer):
@@ -24,5 +24,15 @@ class MovimientoItemSerializer(serializers.ModelSerializer):
             'movimiento':{'read_only':True}
         }
 
+
+class TipoMovimientoSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = TipoMovimiento
+        fields = '__all__'
+
+        extra_kwargs = {
+            'nombre':{'required':True}
+        }
     
     

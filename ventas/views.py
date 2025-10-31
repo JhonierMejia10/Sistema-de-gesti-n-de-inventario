@@ -2,14 +2,14 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny
 from .serializers import CarritoSerializer, OrdenSerializer, OrdenItemSerializer
 from .models import Carrito, Orden, OrdenItem
+from movimientos.models import Movimiento, MovimientoItem
 from rest_framework.response import Response
 
 
 from rest_framework.decorators import action
 from django.db import transaction
 
-# Create your views here.
-
+# Endpoint viewset para el carrito
 class CarritoViewSet(viewsets.ModelViewSet):
     queryset = Carrito.objects.all()
     serializer_class = CarritoSerializer
@@ -31,6 +31,7 @@ class CarritoViewSet(viewsets.ModelViewSet):
         return Response({"message": "Carrito vaciado correctamente"})
     
     
+#Endpoint viewset para las ordenes
 class OrdenViewSet(viewsets.ModelViewSet):
     queryset = Orden.objects.all()
     serializer_class = OrdenSerializer
@@ -86,7 +87,7 @@ class OrdenViewSet(viewsets.ModelViewSet):
                 producto=item.producto,
                 cantidad=item.cantidad,
                 precio=item.precio,
-            )
+            )        
 
         items_carrito.delete()
 
@@ -99,6 +100,7 @@ class OrdenViewSet(viewsets.ModelViewSet):
         )
 
 
+#Endpoint viewset para los items de las ordenes
 class OrdenItemView(viewsets.ReadOnlyModelViewSet):
     queryset = OrdenItem.objects.all()
     serializer_class = OrdenItemSerializer

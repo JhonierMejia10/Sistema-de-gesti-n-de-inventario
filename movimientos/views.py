@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Movimiento, MovimientoItem
-from .serializers import MovimientoSerializer, MovimientoItemSerializer
+from .models import Movimiento, MovimientoItem, TipoMovimiento
+from .serializers import MovimientoSerializer, MovimientoItemSerializer, TipoMovimientoSerializer
 
 # Create your views here.
 
@@ -16,6 +16,14 @@ class MovimientoViewSet(viewsets.ReadOnlyModelViewSet):
 class MovimientoItemViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = MovimientoItem.objects.all()
     serializer_class = MovimientoItemSerializer
+
+    def get_permissions(self):
+        permission_classes = []
+        return [permission() for permission in permission_classes]
+    
+class TipoMovimientoViewSet(viewsets.ModelViewSet):
+    queryset = TipoMovimiento
+    serializer_class = TipoMovimientoSerializer
 
     def get_permissions(self):
         permission_classes = []
