@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     'categorias',
     'clientes',
     'movimientos',
+    'pagos',
     'productos',
     'proveedores',
     'ventas',

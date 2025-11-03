@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAdminUser
-from .serializers import CarritoSerializer, OrdenSerializer, OrdenItemSerializer, EstadoPagoSerializer
-from .models import Carrito, Orden, OrdenItem, EstadoPago
+from .serializers import CarritoSerializer, OrdenSerializer, OrdenItemSerializer
+from .models import Carrito, Orden, OrdenItem
 from movimientos.models import Movimiento, MovimientoItem
 from rest_framework.response import Response
 
@@ -114,11 +114,4 @@ class OrdenItemViewSet(viewsets.ReadOnlyModelViewSet):
         return [permission() for permission in permission_classes]
     
 
-#Endpoint viewset para los estados de pago
-class EstadoPagoViewSet(viewsets.ModelViewSet):
-    queryset = EstadoPago.objects.all()
-    serializer_class = EstadoPagoSerializer
 
-    def get_permissions(self):
-        permission_classes = []
-        return [permission() for permission in permission_classes]
