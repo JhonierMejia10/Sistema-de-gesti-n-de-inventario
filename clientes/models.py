@@ -1,15 +1,23 @@
 from django.db import models
 
 # Create your models here.
-class Cliente(models.Model):
-    Tipos_clientes = [
-        ("Persona","Persona"),
-        ("Empresa","Empresa"),
-        ("Anonimo","Anónimo")
-    ]
 
+
+class TipoCliente(models.Model):
+    nombre = models.CharField(max_length=50, unique=True)
+
+    def __str__(self):
+        return self.nombre
+
+
+class Cliente(models.Model):
+    Tipos_cliente = models.ForeignKey(
+        TipoCliente,
+        on_delete=models.CASCADE,
+        related_name='clientes'
+
+    )
     nombre = models.CharField(max_length=100, null=False)
-    tipo_cliente = models.CharField(choices=Tipos_clientes, db_index=True, max_length=10, default='Anonimo')
     contacto = models.CharField(max_length=50, null=True, blank=True)
     nit = models.IntegerField(null=True, blank=True)
 

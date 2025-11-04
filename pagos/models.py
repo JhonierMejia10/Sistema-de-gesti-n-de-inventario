@@ -9,6 +9,13 @@ class EstadoPago(models.Model):
     def __str__(self):
         return self.nombre
     
+    
+class MedioPago(models.Model):
+    nombre = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.nombre
+
 
 class Pago(models.Model):
     orden = models.ForeignKey(
@@ -20,15 +27,14 @@ class Pago(models.Model):
         EstadoPago,
         on_delete=models.PROTECT
     )
+    metodo_pago = models.ForeignKey(
+        MedioPago,
+        on_delete=models.PROTECT
+    )
+
     fecha = models.DateTimeField(auto_now_add=True)
     monto = models.DecimalField(decimal_places=3, max_digits=65)
 
     def __str__(self):
         return self.id
-
-class MedioPago(models.Model):
-    nombre = models.CharField(max_length=100)
-
-    def __str__(self):
-        return self.nombre
 
