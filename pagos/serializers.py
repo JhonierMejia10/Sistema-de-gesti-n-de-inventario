@@ -5,7 +5,7 @@ from .models import Pago, EstadoPago, MedioPago
 class PagoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pago
-        fieds = ['orden','estado_pago','fecha','monto']
+        fields = ['orden','estado_pago','fecha','monto']
     
 
 class EstadoPagoSerializer(serializers.ModelSerializer):
