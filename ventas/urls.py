@@ -1,12 +1,11 @@
 from django.urls import path, include
 from rest_framework import routers
-from .views import CarritoViewSet, OrdenViewSet, OrdenItemView, EstadoPagoViewSet
+from .views import CarritoViewSet, OrdenViewSet, OrdenItemViewSet
 
 router = routers.DefaultRouter()
 router.register(r'carrito', CarritoViewSet, basename='carrito')
 router.register(r'ordenes', OrdenViewSet, basename='ordenes'),
-router.register(r'orden-items', OrdenItemView, basename='orden-items'),
-router.register(r'estado-pagos', OrdenViewSet, basename='estado-pagos')
+router.register(r'orden-items', OrdenItemViewSet, basename='orden-items'),
 
 urlpatterns = [
     path('', include(router.urls)),

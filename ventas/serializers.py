@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Carrito, Orden, OrdenItem, EstadoPago
+from .models import Carrito, Orden, OrdenItem
 from django.contrib.auth.models import User
 from productos.models import Producto
 
@@ -50,10 +50,3 @@ class OrdenSerializer(serializers.ModelSerializer):
         }
 
 
-class EstadoPagoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = EstadoPago
-        fields = ['nombre']
-        extra_kwargs = {
-            'nombre':{'required':True}
-        }

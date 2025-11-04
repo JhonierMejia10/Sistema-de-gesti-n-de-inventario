@@ -5,12 +5,10 @@ from django.contrib.auth.models import User
 
 # Create your models here.
 
-class EstadoPago(models.Model):
-    nombre = models.CharField(max_length=100, db_index=True, null=False, blank=False)
-    
-    def __str__(self):
-        return self.nombre
-    
+
+class TipoVenta(models.Model):
+    nombre = models.CharField(max_length=100)
+    descripcion = models.TextField(blank=True, null=True)
 
 class Carrito(models.Model):
     usuario_creador = models.ForeignKey(
@@ -39,14 +37,14 @@ class Orden(models.Model):
         Cliente,
         on_delete=models.CASCADE
     )
-    estado_pago = models.ForeignKey(
-        EstadoPago,
-        on_delete=models.CASCADE
-    )
     usuario_creador = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='ordenes_creadas'
+    )
+    tipo_venta = models.ForeignKey(
+        TipoVenta,
+        on_delete=models.CASCADE
     )
     total = models.DecimalField(default=0, max_digits=10, decimal_places=3)
     fecha = models.DateField(db_index=True, auto_now_add=True)

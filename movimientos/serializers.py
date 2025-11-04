@@ -6,7 +6,7 @@ class MovimientoSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Movimiento
-        fields = ['tipo_movimiento','fecha','usuario','nota']
+        fields = ['tipo_movimiento','fecha_creacion','usuario','nota']
 
         extra_kwargs = {
             'fecha':{'read_only':True},
