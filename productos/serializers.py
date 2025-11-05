@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from categorias.models import Categoria
-from proveedores.models import Proveedor
+from compras.models import Proveedor
 from .models import Producto, Marca
 
 class ProductoSerializer(serializers.ModelSerializer):

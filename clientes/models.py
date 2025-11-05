@@ -11,14 +11,16 @@ class TipoCliente(models.Model):
 
 
 class Cliente(models.Model):
-    Tipos_cliente = models.ForeignKey(
+    tipo_cliente = models.ForeignKey(
         TipoCliente,
         on_delete=models.CASCADE,
         related_name='clientes'
 
     )
     nombre = models.CharField(max_length=100, null=False)
-    contacto = models.CharField(max_length=50, null=True, blank=True)
+    telefono = models.CharField(max_length=50, null=True, blank=True)
+    correo = models.EmailField(blank=True, null=True)
+    direccion = models.CharField(max_length=255, null=True, blank=True)
     nit = models.IntegerField(null=True, blank=True)
 
     def __str__(self):

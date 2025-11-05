@@ -1,15 +1,30 @@
 from django.db import models
-from productos.models import Producto
+from productos.models import Producto, ValorAtributoProducto
+from almacenes.models import Almacen
 from django.contrib.auth.models import User
 
 # Create your models here.
+class Stock(models.Model):
+    producto = models.ForeignKey(
+        Producto,
+        on_delete=models.CASCADE,
+    )
+    almacen = models.ForeignKey(
+        Almacen,
+        on_delete=models.CASCADE
+    )
+    cantidad_en_mano = models.IntegerField()
+    valor_atributo_producto = models.ForeignKey(
+        ValorAtributoProducto,
+        on_delete=models.CASCADE
+    )
 
 class TipoMovimiento(models.Model):
     nombre = models.CharField(max_length=255, db_index=True)
 
     def __str__(self):
         return self.nombre
-
+    
 class Movimiento(models.Model):
     
     fecha_creacion = models.DateTimeField(auto_now_add=True)
@@ -28,11 +43,12 @@ class Movimiento(models.Model):
         return self.id
 
 
+
 class MovimientoItem(models.Model):
     movimiento = models.ForeignKey(
         Movimiento,
         on_delete=models.CASCADE,
-        related_name='tems'
+        related_name='items'
     )
     producto = models.ForeignKey(
         Producto,
@@ -42,8 +58,5 @@ class MovimientoItem(models.Model):
 
     def __str__(self):
         return f"{self.producto.nombre} ({self.cantidad})"
-
-
-    
 
 

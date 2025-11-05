@@ -34,5 +34,3 @@ class TipoMovimientoSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'nombre':{'required':True}
         }
-    
-    
