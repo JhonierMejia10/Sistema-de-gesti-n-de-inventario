@@ -19,6 +19,9 @@ class Stock(models.Model):
         on_delete=models.CASCADE
     )
 
+    def __str__(self):
+        return f"Producto: {self.producto.nombre} - Almacen: {self.almacen.nombre_almacen} - Cantidad: {self.cantidad_en_mano} unidades"
+
 class TipoMovimiento(models.Model):
     nombre = models.CharField(max_length=255, db_index=True)
 

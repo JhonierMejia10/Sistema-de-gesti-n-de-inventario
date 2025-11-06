@@ -11,7 +11,6 @@ class EstadoPedido(models.Model):
     
 
 class Pedido(models.Model):
-
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     direccion_envio = models.CharField(max_length=255)
     observaciones = models.TextField(blank=True, null=True)

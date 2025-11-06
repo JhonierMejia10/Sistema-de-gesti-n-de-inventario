@@ -2,7 +2,6 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAdminUser
 from .serializers import CarritoSerializer, OrdenSerializer, OrdenItemSerializer
 from .models import Carrito, Orden, OrdenItem
-from movimientos.models import Movimiento, MovimientoItem
 from rest_framework.response import Response
 
 

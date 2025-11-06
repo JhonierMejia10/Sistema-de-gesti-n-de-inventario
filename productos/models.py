@@ -1,6 +1,6 @@
 from django.db import models
 from categorias.models import Categoria
-from compras.models import Proveedor
+
 
 # Create your models here.
 
@@ -20,19 +20,12 @@ class Producto(models.Model):
     nombre = models.CharField(max_length=255, db_index=True, null=False)
     descripcion = models.TextField()
     precio = models.DecimalField(max_digits=12, decimal_places=3, null=False)
-    stock = models.PositiveIntegerField()
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     foto = models.ImageField(upload_to='productos/', blank=True, null=True)
     is_active = models.BooleanField(default=True)
     categoria = models.ForeignKey(
         Categoria,
         on_delete=models.CASCADE
-    )
-    proveedor = models.ForeignKey(
-        Proveedor,
-        null=True,
-        blank=True,
-        on_delete=models.SET_NULL
     )
     marca = models.ForeignKey(
         Marca,
