@@ -43,7 +43,7 @@ class Movimiento(models.Model):
     nota = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.id
+        return f"Movimiento {self.id} - Tipo: {self.tipo_movimiento.nombre} - Fecha: {self.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S')}"
 
 
 
