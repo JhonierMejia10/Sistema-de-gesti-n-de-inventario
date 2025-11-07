@@ -25,6 +25,15 @@ class TipoMovimientoSerializer(serializers.ModelSerializer):
             'nombre':{'required':True}
         }
     
+    def validate_nombre(self, validate_data):
+        if self.instance:
+            if TipoMovimiento.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
+                raise serializers.ValidationError("Este tipo de movimiento ya existe.")
+        else:
+            if TipoMovimiento.objects.filter(nombre=validate_data).exists():
+                raise serializers.ValidationError("Este tipo de movimiento ya existe.")
+        return validate_data
+    
 
 class MovimientoSerializer(serializers.ModelSerializer):
 
