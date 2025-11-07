@@ -6,4 +6,7 @@ class Categoria(models.Model):
     descripcion = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.nombre
+        if self.descripcion is None or self.descripcion.strip() == "":
+            return f"Categoria: {self.nombre} - Sin descripción"
+        return f"Categoria: {self.nombre} - Descripción: {self.descripcion}"
+    

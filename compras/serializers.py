@@ -27,6 +27,19 @@ class EstadoCompraSerializer(serializers.ModelSerializer):
     class Meta:
         model = EstadoCompra
         fields = '__all__'
+        
+        extra_kwargs = {
+            'nombre':{'required':True}
+        }
+
+        def validate_nombre(self,validate_data):
+
+            if self.instance:
+                if EstadoCompra.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
+                    raise serializers.ValidationError("Ya existe un estado de compra con este nombre.")
+                else:
+                    if EstadoCompra.objects.filter(nombre=validate_data):
+                        raise serializers.ValidationError("Ya existe un estado de compra con este nombre.")
 
 
 class OrdenCompraSerializer(serializers.ModelSerializer):
