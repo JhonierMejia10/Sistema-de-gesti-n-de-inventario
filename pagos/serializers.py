@@ -13,6 +13,7 @@ class EstadoPagoSerializer(serializers.ModelSerializer):
         else:
             if EstadoPago.objects.filter(nombre=validate_data).exists():
                 raise serializers.ValidationError("Este estado de pago ya existe.")
+        return validate_data
 
 
 class MedioPagoSerializer(serializers.ModelSerializer):
@@ -27,6 +28,7 @@ class MedioPagoSerializer(serializers.ModelSerializer):
         else:
             if MedioPago.objects.filter(nombre=validate_data).exists():
                 raise serializers.ValidationError("Este medio de pago ya existe.")
+        return validate_data
 
 
 

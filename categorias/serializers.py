@@ -22,7 +22,6 @@ class CategoriaSerializer(serializers.ModelSerializer):
         else:
             if Categoria.objects.filter(nombre=validate_data).exists():
                 raise serializers.ValidationError("Ya existe una categoría con este nombre.")
-        
         return validate_data
     
     

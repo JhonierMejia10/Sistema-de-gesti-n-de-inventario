@@ -4,7 +4,7 @@ from productos.models import Producto
 
 # Create your models here.
 class EstadoPedido(models.Model):
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100, unique=True, blank=False, null=False)
 
     def __str__(self):
         return self.nombre

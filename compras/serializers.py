@@ -37,9 +37,10 @@ class EstadoCompraSerializer(serializers.ModelSerializer):
             if self.instance:
                 if EstadoCompra.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
                     raise serializers.ValidationError("Ya existe un estado de compra con este nombre.")
-                else:
-                    if EstadoCompra.objects.filter(nombre=validate_data):
-                        raise serializers.ValidationError("Ya existe un estado de compra con este nombre.")
+            else:
+                if EstadoCompra.objects.filter(nombre=validate_data):
+                    raise serializers.ValidationError("Ya existe un estado de compra con este nombre.")
+            return validate_data
 
 
 class OrdenCompraSerializer(serializers.ModelSerializer):

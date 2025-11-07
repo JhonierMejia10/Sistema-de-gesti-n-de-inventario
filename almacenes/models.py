@@ -13,7 +13,7 @@ class Ubicacion(models.Model):
 
 class Almacen(models.Model):
     nombre = models.CharField(max_length=255, blank=False, null=False)
-    sitio = models.ForeignKey(
+    ubicacion = models.ForeignKey(
         Ubicacion,
         on_delete=models.CASCADE,
         blank=True,

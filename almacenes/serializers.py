@@ -22,7 +22,6 @@ class AlmacenSerializer(serializers.ModelSerializer):
         else:
             if Almacen.objects.filter(nombre=validate_data).exists():
                 raise serializers.ValidationError("Ya existe un almacen con este nombre.")
-        
         return validate_data
     
     def to_representation(self, instance):

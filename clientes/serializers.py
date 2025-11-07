@@ -19,6 +19,7 @@ class TipoClienteSerializer(serializers.ModelSerializer):
         else:
             if TipoCliente.objects.filter(nombre=validate_data):
                 return serializers.ValidationError("Ya existe un tipo de cliente con este error")
+        return validate_data
 
 
 class ClienteSerializer(serializers.ModelSerializer):
@@ -39,4 +40,5 @@ class ClienteSerializer(serializers.ModelSerializer):
         else:
             if Cliente.objects.filter(nit=validate_data).exists():
                 return serializers.ValidationError("Este cliente ya existe")
+        return validate_data
 
