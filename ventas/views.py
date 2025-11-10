@@ -2,6 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.permissions import AllowAny, IsAdminUser
 from .serializers import CarritoSerializer, OrdenSerializer, OrdenItemSerializer
 from .models import Carrito, Orden, OrdenItem
+from .permissions import PermitirTodo, PermitirAdmin
 from rest_framework.response import Response
 
 
@@ -12,10 +13,7 @@ from django.db import transaction
 class CarritoViewSet(viewsets.ModelViewSet):
     queryset = Carrito.objects.all()
     serializer_class = CarritoSerializer
-
-    def get_permissions(self):
-        permission_classes = [AllowAny]
-        return [permission() for permission in permission_classes]
+    permission_classes = [PermitirTodo]
         
     def get_queryset(self):
         cliente_id = self.request.query_params.get('cliente')
@@ -34,11 +32,8 @@ class CarritoViewSet(viewsets.ModelViewSet):
 class OrdenViewSet(viewsets.ModelViewSet):
     queryset = Orden.objects.all()
     serializer_class = OrdenSerializer
+    permission_classes = [PermitirTodo]
 
-    def get_permissions(self):
-        permission_classes = []
-        return [permission() for permission in permission_classes]
-    
     def get_queryset(self):
         cliente_id = self.request.query_params.get('cliente')
         if cliente_id:
@@ -107,10 +102,8 @@ class OrdenViewSet(viewsets.ModelViewSet):
 class OrdenItemViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = OrdenItem.objects.all()
     serializer_class = OrdenItemSerializer
+    permission_classes = [PermitirAdmin]
 
-    def get_permissions(self):
-        permission_classes = []
-        return [permission() for permission in permission_classes]
-    
+
 
 
