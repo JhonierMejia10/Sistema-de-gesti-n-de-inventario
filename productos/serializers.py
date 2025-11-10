@@ -1,13 +1,23 @@
 from rest_framework import serializers
 from categorias.models import Categoria
 from compras.models import Proveedor
-from .models import Producto, Marca
+from .models import TipoProducto,Marca, Producto, TipoAtributoProducto, AtributoProducto
+
+
+class TipoProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoProducto
+        fields = ['nombre']
+
+class MarcaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Marca
+        fields = ['nombre']
 
 class ProductoSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Producto
-        fields = ['nombre','descripcion','precio','stock','categoria','proveedor','marca']
+        fields = ['nombre','descripcion','precio','tipo_producto','categoria','marca','foto','nota']
         read_only_fields = ['id','fecha_creacion']
 
         extra_kwargs = {
@@ -15,12 +25,7 @@ class ProductoSerializer(serializers.ModelSerializer):
             'precio':{'required':True},
             'categoria':{'required':True}
         }
-    
-    def validate_stock(self, validate_data):
-        if validate_data < 0:
-            raise serializers.ValidationError("El stock no puede ser menor que cero")
-        return validate_data
-    
+        
     def validate_precio(self, validate_data):
         if validate_data < 0:
             raise serializers.ValidationError("El valor no puede ser menor a cero")
@@ -31,14 +36,14 @@ class ProductoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("La categoría seleccionada no existe")
         return validate_data
     
-class MarcaSerializer(serializers.ModelSerializer):
+
+class TipoAtrubutoProductoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Marca
+        model = TipoAtributoProducto
         fields = ['nombre']
 
-    def validate_nombre(self, validate_data):
-        if Marca.objects.filter(nomre = validate_data).exists():
-            raise serializers.ValidationError("Ya existe una marca con este nombre")
-        return validate_data
 
-    
+class AtributoProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AtributoProducto
+        fields = ['producto','tipo_atributo','valor']

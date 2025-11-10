@@ -1,5 +1,5 @@
 from django.db import models
-from productos.models import Producto, ValorAtributoProducto
+from productos.models import Producto, AtributoProducto
 from almacenes.models import Almacen
 from django.contrib.auth.models import User
 
@@ -15,7 +15,7 @@ class Stock(models.Model):
     )
     cantidad_en_mano = models.IntegerField()
     valor_atributo_producto = models.ForeignKey(
-        ValorAtributoProducto,
+        AtributoProducto,
         on_delete=models.CASCADE
     )
 
