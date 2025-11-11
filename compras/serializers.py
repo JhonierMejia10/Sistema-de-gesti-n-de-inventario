@@ -8,11 +8,11 @@ class ProveedorSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
         extra_kwargs = {
-            'nombre':{'required':True}
+            'nombre':{'required':True},
+            'slug':{'read_only':True}
         }
     
     def validate_nombre(self,validate_data):
-
         if self.instance:
             if Proveedor.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
                 raise serializers.ValidationError("Ya existe un proveedor con este nombre.")

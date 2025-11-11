@@ -36,6 +36,7 @@ class PagoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pago
         fields = ['orden','estado_pago','fecha','monto']
+        read_only = ['orden']
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)

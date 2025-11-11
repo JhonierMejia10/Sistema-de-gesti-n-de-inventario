@@ -24,6 +24,7 @@ class Proveedor(models.Model):
 
 class EstadoCompra(models.Model):
     nombre = models.CharField(max_length=50, unique=True, null=False, blank=False)
+    descripcion = models.TextField(blank=True,null=True) 
 
     def __str__(self):
         return self.nombre

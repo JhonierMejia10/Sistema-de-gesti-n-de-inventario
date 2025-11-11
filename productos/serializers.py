@@ -31,11 +31,6 @@ class ProductoSerializer(serializers.ModelSerializer):
             raise serializers.ValidationError("El valor no puede ser menor a cero")
         return validate_data
 
-    def validate_categoria(self, validate_data):
-        if not Categoria.objects.filter(nombre=validate_data).exists():
-            raise serializers.ValidationError("La categoría seleccionada no existe")
-        return validate_data
-    
 
 class TipoAtrubutoProductoSerializer(serializers.ModelSerializer):
     class Meta:

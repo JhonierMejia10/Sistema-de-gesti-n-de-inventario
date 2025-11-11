@@ -15,7 +15,6 @@ class Cliente(models.Model):
         TipoCliente,
         on_delete=models.CASCADE,
         related_name='clientes'
-
     )
     nombre = models.CharField(max_length=100, null=False)
     telefono = models.CharField(max_length=50, null=True, blank=True)

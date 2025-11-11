@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from .models import Cliente, TipoCliente
-from .serializers import ClienteSerializer
+from .serializers import ClienteSerializer, TipoClienteSerializer
 from .permissions import PermitirTodo
 from rest_framework import viewsets
 
@@ -9,7 +9,7 @@ from rest_framework import viewsets
 
 class TipoClienteViewSet(viewsets.ModelViewSet):
     queryset = TipoCliente.objects.all()
-    serializer_class = ClienteSerializer
+    serializer_class = TipoClienteSerializer
     permission_classes = [PermitirTodo]
     
 
