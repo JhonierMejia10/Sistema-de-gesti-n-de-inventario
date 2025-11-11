@@ -57,7 +57,7 @@ class OrdenCompraSerializer(serializers.ModelSerializer):
 class ItemoOrdenCompraSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemOrdenCompra
-        fields = '__all__'
+        fields = ['producto','cantidad','precio_unitario','orden_compra']
 
 
     

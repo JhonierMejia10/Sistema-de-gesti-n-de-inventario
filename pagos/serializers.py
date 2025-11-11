@@ -4,7 +4,7 @@ from .models import Pago, EstadoPago, MedioPago
 class EstadoPagoSerializer(serializers.ModelSerializer):
     class Meta:
         model = EstadoPago
-        fields = ['nombre']
+        fields = '__all__'
     
     def validate_nombre(self, validate_data):
         if self.instance:
@@ -19,7 +19,7 @@ class EstadoPagoSerializer(serializers.ModelSerializer):
 class MedioPagoSerializer(serializers.ModelSerializer):
     class Meta:
         model = MedioPago
-        fields = ['nombre']
+        fields = ['nombre','descripcion']
     
     def validate_nombre(self, validate_data):
         if self.instance:
@@ -35,7 +35,7 @@ class MedioPagoSerializer(serializers.ModelSerializer):
 class PagoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Pago
-        fields = ['orden','estado_pago','fecha','monto']
+        fields = ['orden','estado_pago','metodo_pago','fecha','monto']
         read_only = ['orden']
     
     def to_representation(self, instance):

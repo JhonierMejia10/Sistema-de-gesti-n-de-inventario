@@ -13,18 +13,19 @@ class Ubicacion(models.Model):
 
 class Almacen(models.Model):
     nombre = models.CharField(max_length=255, blank=False, null=False)
+    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
+    descripcion = models.TextField(blank=True, null=True)
     ubicacion = models.ForeignKey(
         Ubicacion,
         on_delete=models.CASCADE,
         blank=True,
         null=True
     )
-    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
-            self.slug = slugify(self.nombre_almacen)
+            self.slug = slugify(self.nombre)
         super().save(*args, **kwargs)
     
     def __str__(self):
-        return self.nombre_almacen
+        return self.nombre

@@ -4,10 +4,11 @@ from django.db import models
 
 
 class TipoCliente(models.Model):
-    nombre = models.CharField(max_length=50, unique=True)
+    nombre = models.CharField(max_length=50, unique=True, blank=False, null=False)
+    descripcion = models.TextField(blank=True, null=True)
 
     def __str__(self):
-        return self.nombre
+        return f"{self.nombre} : {self.descripcion}"
 
 
 class Cliente(models.Model):

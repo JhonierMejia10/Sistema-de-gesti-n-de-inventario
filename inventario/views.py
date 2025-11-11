@@ -11,16 +11,16 @@ class StockViewSet(viewsets.ModelViewSet):
     permission_classes = [PermitirTodo]
     
 class TipoMovimientoViewSet(viewsets.ModelViewSet):
-    queryset = TipoMovimiento
+    queryset = TipoMovimiento.objects.all()
     serializer_class = TipoMovimientoSerializer
     permission_classes = [PermitirTodo]
 
-class MovimientoViewSet(viewsets.ReadOnlyModelViewSet):
+class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = Movimiento.objects.all()
     serializer_class = MovimientoSerializer
     permission_classes = [PermitirTodo]
     
-class MovimientoItemViewSet(viewsets.ReadOnlyModelViewSet):
+class MovimientoItemViewSet(viewsets.ModelViewSet):
     queryset = MovimientoItem.objects.all()
     serializer_class = MovimientoItemSerializer
     permission_classes = [PermitirTodo]

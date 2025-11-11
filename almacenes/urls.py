@@ -4,7 +4,7 @@ from .views import UbicacionViewSet, AlmacenViewSet
 
 
 router = DefaultRouter()
-router.register(r'sitios', UbicacionViewSet, basename='sitios')
+router.register(r'ubicaciones', UbicacionViewSet, basename='sitios')
 router.register(r'almacenes', AlmacenViewSet, basename='almacenes')
 
 urlpatterns = router.urls

@@ -4,8 +4,8 @@ from django.urls import path, include
 
 router = routers.DefaultRouter()
 router.register(r'movimientos', MovimientoViewSet, basename='movimientos')
-router.register(r'movimiento-items', MovimientoItemViewSet, basename='movimiento-items')
-router.register(r'tipos-movimientos', TipoMovimientoViewSet, basename='tipos-movimientos')
+router.register(r'items-de-movimiento', MovimientoItemViewSet, basename='movimiento-items')
+router.register(r'tipos-de-movimiento', TipoMovimientoViewSet, basename='tipos-movimientos')
 router.register(r'stocks', StockViewSet, basename='stocks')
 
 urlpatterns = [

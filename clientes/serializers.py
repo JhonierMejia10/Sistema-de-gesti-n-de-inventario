@@ -5,11 +5,11 @@ from .models import Cliente, TipoCliente
 class TipoClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoCliente
-        fields = '__all__'
-        read_only_fields = ['id']
+        fields = ['nombre','descripcion']
 
         extra_kwargs = {
-            'nombre': {'required':True}
+            'nombre': {'required':True},
+            'id':{'read_only':True}
         }
     
     def validate_nombre(self, validate_data):

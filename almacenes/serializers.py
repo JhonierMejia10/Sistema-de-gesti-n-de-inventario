@@ -11,7 +11,7 @@ class UbicacionSerializer(serializers.ModelSerializer):
 class AlmacenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Almacen
-        fields = '__all__'
+        fields = ['nombre','ubicacion','descripcion']
     
     def validate_nombre(self, validate_data):
         
@@ -26,7 +26,7 @@ class AlmacenSerializer(serializers.ModelSerializer):
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation['sitio'] = UbicacionSerializer(instance.sitio).data
+        representation['ubicacion'] = UbicacionSerializer(instance.ubicacion).data
         return representation
     
     extra_kwargs = {
