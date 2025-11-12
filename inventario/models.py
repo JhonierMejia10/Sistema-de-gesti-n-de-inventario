@@ -17,6 +17,9 @@ class Stock(models.Model):
 
     def __str__(self):
         return f"Producto: {self.producto.nombre} - Almacen: {self.almacen.nombre_almacen} - Cantidad: {self.cantidad_en_mano} unidades"
+    
+    class Meta:
+        unique_together = ['producto','almacen']
 
 class TipoMovimiento(models.Model):
     nombre = models.CharField(max_length=255, db_index=True, unique=True)

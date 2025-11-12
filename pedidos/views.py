@@ -1,15 +1,16 @@
 from .models import EstadoPedido, Pedido, PedidoItem
 from .serializers import EstadoPedidoSerializer, PedidoSerializer, PedidoItemSerializer
 from .permissions import PermitirTodo
-from rest_framework import viewsets
+from rest_framework import viewsets, generics
+from rest_framework.permissions import IsAdminUser
 
 from rest_framework import viewsets
 # Create your views here.
 
-class EstadoPedidoViewSet(viewsets.ModelViewSet):
+class EstadoPedidoGenericView(generics.ListAPIView):
     queryset = EstadoPedido.objects.all()
     serializer_class = EstadoPedidoSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAdminUser]
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
