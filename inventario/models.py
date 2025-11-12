@@ -45,8 +45,6 @@ class Movimiento(models.Model):
     def __str__(self):
         return f"Movimiento {self.id} - Tipo: {self.tipo_movimiento.nombre} - Fecha: {self.fecha_creacion.strftime('%Y-%m-%d %H:%M:%S')}"
 
-
-
 class MovimientoItem(models.Model):
     movimiento = models.ForeignKey(
         Movimiento,

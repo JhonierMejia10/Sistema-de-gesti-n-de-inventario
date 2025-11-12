@@ -30,7 +30,6 @@ class Carrito(models.Model):
     class Meta:
         unique_together = ('producto','cliente')
     
-
 class Orden(models.Model):
 
     cliente = models.ForeignKey(
@@ -49,8 +48,6 @@ class Orden(models.Model):
     total = models.DecimalField(default=0, max_digits=10, decimal_places=3)
     fecha = models.DateField(db_index=True, auto_now_add=True)
     
-
-
 class OrdenItem(models.Model):
     orden = models.ForeignKey(
         Orden,

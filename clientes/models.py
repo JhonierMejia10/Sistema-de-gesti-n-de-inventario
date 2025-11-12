@@ -9,8 +9,7 @@ class TipoCliente(models.Model):
 
     def __str__(self):
         return f"{self.nombre} : {self.descripcion}"
-
-
+    
 class Cliente(models.Model):
     tipo_cliente = models.ForeignKey(
         TipoCliente,

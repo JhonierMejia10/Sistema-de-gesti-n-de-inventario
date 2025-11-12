@@ -21,14 +21,12 @@ class Proveedor(models.Model):
     def __str__(self):
         return f"{self.nombre} - Telefono: {self.telefono} - Correo: {self.correo}"
     
-
 class EstadoCompra(models.Model):
     nombre = models.CharField(max_length=50, unique=True, null=False, blank=False)
     descripcion = models.TextField(blank=True,null=True) 
 
     def __str__(self):
         return self.nombre
-
 
 class OrdenCompra(models.Model):
     fecha_orden = models.DateTimeField(auto_now_add=True)
@@ -55,7 +53,6 @@ class OrdenCompra(models.Model):
     def __str__(self):
         return f"Orden de compra #{self.id} realizada al proveedor ({self.proveedor.nombre}) el día {self.fecha_orden.strftime('%Y-%m-%d')}" 
     
-
 class ItemOrdenCompra(models.Model):
     orden_compra = models.ForeignKey(
         OrdenCompra,

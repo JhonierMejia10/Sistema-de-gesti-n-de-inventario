@@ -10,7 +10,6 @@ class EstadoPedido(models.Model):
     def __str__(self):
         return self.nombre
     
-
 class Pedido(models.Model):
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     direccion_envio = models.CharField(max_length=255)

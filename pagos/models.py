@@ -10,14 +10,12 @@ class EstadoPago(models.Model):
     def __str__(self):
         return self.nombre
     
-    
 class MedioPago(models.Model):
     nombre = models.CharField(max_length=100, unique=True, db_index=True, null=False, blank=False)
     descripcion = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.nombre
-
 
 class Pago(models.Model):
     orden = models.ForeignKey(
