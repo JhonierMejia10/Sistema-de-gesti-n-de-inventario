@@ -6,12 +6,14 @@ from categorias.models import Categoria
 
 class TipoProducto(models.Model):
     nombre = models.CharField(max_length=255, unique=True, db_index=True)
+    descripcion = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nombre
 
 class Marca(models.Model):
     nombre = models.CharField(max_length=255, unique=True, db_index=True)
+    descripcion = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nombre
@@ -45,10 +47,10 @@ class Producto(models.Model):
 #Lógica para agregar caracteristicas a los productos (no se usará para la primera versión de la aplicación)
 class TipoAtributoProducto(models.Model):
     nombre = models.CharField(max_length=255, unique=True, db_index=True, blank=False, null=True)
+    descripcion = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nombre
-
 
 class AtributoProducto(models.Model):
     producto = models.ForeignKey(
