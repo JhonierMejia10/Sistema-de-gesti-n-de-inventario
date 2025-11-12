@@ -42,7 +42,7 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
-
+#Lógica para agregar caracteristicas a los productos (no se usará para la primera versión de la aplicación)
 class TipoAtributoProducto(models.Model):
     nombre = models.CharField(max_length=255, unique=True, db_index=True, blank=False, null=True)
 

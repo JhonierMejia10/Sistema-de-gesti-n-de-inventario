@@ -9,7 +9,7 @@ class StockSerializer(serializers.ModelSerializer):
         model = Stock
         fields = '__all__'
 
-        extra_kwwargs = {
+        extra_kwargs = {
             'producto':{'required':True},
             'almacen':{'required':True},
             'cantidad_en_mano':{'required':True}
