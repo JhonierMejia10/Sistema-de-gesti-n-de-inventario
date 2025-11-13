@@ -13,16 +13,14 @@ class AlmacenSerializer(serializers.ModelSerializer):
         model = Almacen
         fields = ['nombre','ubicacion','descripcion']
     
-    def validate_nombre(self, validate_data):
-        
+    def validate_nombre(self, value):
+        qs = Almacen.objects.filter(nombre__iexact=value)
+
         if self.instance:
-            if Almacen.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
-                raise serializers.ValidationError("Ya existe un almacen con este nombre.")
+            qs = qs.exclude(id=self.instance.id)
+        if qs.exists:
+            raise serializers.ValidationError("Ya existe un estado con este nombre (independiente de mayúsculas/minúsculas).")
         
-        else:
-            if Almacen.objects.filter(nombre=validate_data).exists():
-                raise serializers.ValidationError("Ya existe un almacen con este nombre.")
-        return validate_data
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)
