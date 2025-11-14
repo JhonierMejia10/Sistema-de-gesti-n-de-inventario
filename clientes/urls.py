@@ -5,7 +5,7 @@ from rest_framework import routers
 
 router = routers.DefaultRouter()
 router.register(r'clientes',ClienteViewSet, basename="cliente")
-router.register(r'tipos-clientes',TipoClienteViewSet, basename="tipocliente")
+router.register(r'tipos-de-clientes',TipoClienteViewSet, basename="tipocliente")
 
 urlpatterns = [
     path('', include(router.urls))

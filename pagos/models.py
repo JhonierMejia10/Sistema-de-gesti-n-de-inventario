@@ -4,18 +4,18 @@ from ventas .models import Orden
 
 # Create your models here.
 class EstadoPago(models.Model):
-    nombre = models.CharField(max_length=100, db_index=True, null=False, blank=False)
+    nombre = models.CharField(max_length=100, db_index=True, unique=True, null=False, blank=False)
+    descripcion = models.TextField(null=True, blank=True)
     
     def __str__(self):
         return self.nombre
-    
     
 class MedioPago(models.Model):
-    nombre = models.CharField(max_length=100)
+    nombre = models.CharField(max_length=100, unique=True, db_index=True, null=False, blank=False)
+    descripcion = models.TextField(null=True, blank=True)
 
     def __str__(self):
         return self.nombre
-
 
 class Pago(models.Model):
     orden = models.ForeignKey(

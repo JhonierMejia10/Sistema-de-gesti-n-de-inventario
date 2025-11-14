@@ -1,13 +1,33 @@
 from rest_framework import serializers
 from categorias.models import Categoria
-from proveedores.models import Proveedor
-from .models import Producto, Marca
+from compras.models import Proveedor
+from .models import TipoProducto,Marca, Producto, TipoAtributoProducto, AtributoProducto
+from inventario.models import Stock
+from almacenes.models import Almacen
+
+class TipoProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoProducto
+        fields = ['nombre']
+
+class MarcaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Marca
+        fields = ['nombre']
+
+class StockInicialSerializer(serializers.Serializer):
+    """Serializer específico para crear stock inicial con productos"""
+    almacen = serializers.PrimaryKeyRelatedField(
+        queryset = Almacen.objects.all()
+    )
+    cantidad_en_mano = serializers.IntegerField(min_value=0)
 
 class ProductoSerializer(serializers.ModelSerializer):
+    stock_inicial = StockInicialSerializer(many=True, write_only=True, required=False)
 
     class Meta:
         model = Producto
-        fields = ['nombre','descripcion','precio','stock','categoria','proveedor','marca']
+        fields = ['nombre','descripcion','precio','tipo_producto','categoria','marca','foto','nota','stock_inicial']
         read_only_fields = ['id','fecha_creacion']
 
         extra_kwargs = {
@@ -15,30 +35,32 @@ class ProductoSerializer(serializers.ModelSerializer):
             'precio':{'required':True},
             'categoria':{'required':True}
         }
-    
-    def validate_stock(self, validate_data):
-        if validate_data < 0:
-            raise serializers.ValidationError("El stock no puede ser menor que cero")
-        return validate_data
-    
+        
     def validate_precio(self, validate_data):
         if validate_data < 0:
             raise serializers.ValidationError("El valor no puede ser menor a cero")
         return validate_data
-
-    def validate_categoria(self, validate_data):
-        if not Categoria.objects.filter(nombre=validate_data).exists():
-            raise serializers.ValidationError("La categoría seleccionada no existe")
-        return validate_data
     
-class MarcaSerializer(serializers.ModelSerializer):
+    def create(self, validate_data):
+        stock_data = validate_data.pop('stock_inicial', [])
+        producto = Producto.objects.create(**validate_data)
+        
+        #Crear registros de stock:
+        #**stock_item es la instancia completa
+        for stock_item in stock_data:
+            Stock.objects.create(
+                producto=producto,
+                **stock_item
+            )
+        return producto
+        
+class TipoAtrubutoProductoSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Marca
+        model = TipoAtributoProducto
         fields = ['nombre']
 
-    def validate_nombre(self, validate_data):
-        if Marca.objects.filter(nomre = validate_data).exists():
-            raise serializers.ValidationError("Ya existe una marca con este nombre")
-        return validate_data
 
-    
+class AtributoProductoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = AtributoProducto
+        fields = ['producto','tipo_atributo','valor']
