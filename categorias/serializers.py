@@ -13,15 +13,12 @@ class CategoriaSerializer(serializers.ModelSerializer):
             'nombre':{'required': True, 'allow_blank':False}
         }
 
-    def validate_nombre(self,validate_data):
+    def validate_nombre(self, value):
+        qs = Categoria.objects.filter(nombre__iexact=value)
 
         if self.instance:
-            if Categoria.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
-                raise serializers.ValidationError("Ya existe una categoría con este nombre.")
-
-        else:
-            if Categoria.objects.filter(nombre=validate_data).exists():
-                raise serializers.ValidationError("Ya existe una categoría con este nombre.")
-        return validate_data
+            qs = qs.exclude(id=self.instance.id)
+        if qs.exists:
+            raise serializers.ValidationError("Ya existe un estado con este nombre (independiente de mayúsculas/minúsculas).")
     
     
