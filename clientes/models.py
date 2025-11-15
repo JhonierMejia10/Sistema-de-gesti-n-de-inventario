@@ -7,7 +7,7 @@ from django.utils.text import slugify
 class TipoCliente(models.Model):
     nombre = models.CharField(max_length=50, unique=True, blank=False, null=False)
     descripcion = models.TextField(blank=True, null=True)
-    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    slug = models.SlugField(max_length=255, unique=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:

@@ -10,6 +10,7 @@ from rest_framework import viewsets
 class TipoClienteViewSet(viewsets.ModelViewSet):
     queryset = TipoCliente.objects.all()
     serializer_class = TipoClienteSerializer
+    lookup_field = 'slug'
     permission_classes = [PermitirTodo]
 
 class ClienteViewSet(viewsets.ModelViewSet):
