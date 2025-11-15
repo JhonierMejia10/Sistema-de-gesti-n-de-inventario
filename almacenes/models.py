@@ -14,7 +14,7 @@ class Ubicacion(models.Model):
 class Almacen(models.Model):
     nombre = models.CharField(max_length=255, blank=False, null=False)
     descripcion = models.TextField(blank=True, null=True)
-    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
     ubicacion = models.ForeignKey(
         Ubicacion,
         on_delete=models.CASCADE,

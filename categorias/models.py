@@ -5,7 +5,7 @@ from django.utils.text import slugify
 class Categoria(models.Model):
     nombre = models.CharField(max_length=255, unique=True, blank=False, null=False)
     descripcion = models.TextField(blank=True, null=True)
-    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
 
     #Se reescribió el método save para crear y guardar automáticamente los slugs usando la clase slugify
     def save(self, *args, **kwargs):
