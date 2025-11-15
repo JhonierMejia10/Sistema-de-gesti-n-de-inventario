@@ -18,7 +18,7 @@ class AlmacenSerializer(serializers.ModelSerializer):
 
         if self.instance:
             qs = qs.exclude(id=self.instance.id)
-        if qs.exists:
+        if qs.exists():
             raise serializers.ValidationError("Ya existe un estado con este nombre (independiente de mayúsculas/minúsculas).")
         return value
         
