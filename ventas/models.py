@@ -27,7 +27,7 @@ class Carrito(models.Model):
     )
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(decimal_places=2, max_digits=12)
-    precio = models.DecimalField(decimal_places=3, max_digits=10)
+    precio = models.DecimalField(decimal_places=2, max_digits=12)
 
     class Meta:
         unique_together = ('producto','cliente')
@@ -37,8 +37,7 @@ class Orden(models.Model):
         EstadoPago,
         on_delete=models.PROTECT,
         db_index=True,
-        related_name='ordenes_venta',
-        default=1
+        related_name='ordenes_venta'
     )
     cliente = models.ForeignKey(
         Cliente,
@@ -72,7 +71,7 @@ class Orden(models.Model):
         else:
             self.estado_pago = EstadoPago.obtener_abonado()
         
-        self.save(update_fields='estado_pago')
+        self.save(update_fields=['estado_pago'])
     
     def __str__(self):
         return f"Orden #{self.id}"

@@ -27,19 +27,13 @@ class Proveedor(models.Model):
 class EstadoCompra(models.Model):
     nombre = models.CharField(max_length=50, unique=True, null=False, blank=False)
     descripcion = models.TextField(blank=True,null=True)
-    slug = models.SlugField(max_length=255)
-
-    def save(self, *args, **kwargs):
-        if not self.slug:
-            self.slug = slugify(self.nombre)
-        super().save(*args,**kwargs)
 
     def __str__(self):
         return self.nombre
 
 class OrdenCompra(models.Model):
     fecha_orden = models.DateTimeField(auto_now_add=True)
-    total = models.DecimalField(max_digits=8, decimal_places=3)
+    total = models.DecimalField(max_digits=12, decimal_places=2)
     nota = models.TextField(blank=True, null=True)
     estado_pago = models.ForeignKey(
         EstadoPago,
@@ -95,7 +89,7 @@ class ItemOrdenCompra(models.Model):
         on_delete=models.CASCADE
     )
     cantidad = models.PositiveIntegerField()
-    precio_unitario = models.DecimalField(max_digits=8, decimal_places=3)
+    precio_unitario = models.DecimalField(max_digits=12, decimal_places=2)
     
     def subtotal(self):
         return self.cantidad * self.precio_unitario
