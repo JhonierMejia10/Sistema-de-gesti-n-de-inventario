@@ -12,15 +12,14 @@ class ProveedorSerializer(serializers.ModelSerializer):
             'slug':{'read_only':True}
         }
     
-    def validate_nombre(self,validate_data):
-        if self.instance:
-            if Proveedor.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
-                raise serializers.ValidationError("Ya existe un proveedor con este nombre.")
+    def validate_nombre(self, value):
+        qs = Proveedor.objects.filter(nombre__iexact=value)
 
-        else:
-            if Proveedor.objects.filter(nombre=validate_data).exists():
-                raise serializers.ValidationError("Ya existe un proveedor con este nombre.")
-        return validate_data
+        if self.instance:
+            qs = qs.exclude(id=self.instance.id)
+        if qs.exists():
+            raise serializers.ValidationError("Ya existe un proveedor con este nombre.")
+        return value
         
 
 class EstadoCompraSerializer(serializers.ModelSerializer):
@@ -32,16 +31,14 @@ class EstadoCompraSerializer(serializers.ModelSerializer):
             'nombre':{'required':True}
         }
 
-        def validate_nombre(self,validate_data):
+        def validate_nombre(self, value):
+            qs = EstadoCompra.objects.filter(nombre__iexact=value)
 
             if self.instance:
-                if EstadoCompra.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
-                    raise serializers.ValidationError("Ya existe un estado de compra con este nombre.")
-            else:
-                if EstadoCompra.objects.filter(nombre=validate_data):
-                    raise serializers.ValidationError("Ya existe un estado de compra con este nombre.")
-            return validate_data
-
+                qs = qs.exclude(id=self.instance.id)
+            if qs.exists():
+                raise serializers.ValidationError("Este estado de compra ya existe.")
+            return value            
 
 class OrdenCompraSerializer(serializers.ModelSerializer):
     class Meta:

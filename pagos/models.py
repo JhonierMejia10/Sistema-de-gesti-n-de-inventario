@@ -1,15 +1,14 @@
 
 from django.db import models
 from ventas .models import Orden
+from compras .models import OrdenCompra
+from django.contrib.auth.models import User
+from django.core.exceptions import ValidationError
+from django.db.models import Sum
 
 # Create your models here.
-class EstadoPago(models.Model):
-    nombre = models.CharField(max_length=100, db_index=True, unique=True, null=False, blank=False)
-    descripcion = models.TextField(null=True, blank=True)
-    
-    def __str__(self):
-        return self.nombre
-    
+
+#Este modelo se debe migrar a la aplicación core pero no se ha hecho debido a que puede generar retrasos
 class MedioPago(models.Model):
     nombre = models.CharField(max_length=100, unique=True, db_index=True, null=False, blank=False)
     descripcion = models.TextField(null=True, blank=True)
@@ -17,24 +16,99 @@ class MedioPago(models.Model):
     def __str__(self):
         return self.nombre
 
-class Pago(models.Model):
+class PagoVenta(models.Model):
+    fecha = models.DateTimeField(auto_now_add=True)
+    monto = models.DecimalField(decimal_places=2, max_digits=12)
+    nota = models.TextField(blank=True,null=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
     orden = models.ForeignKey(
         Orden,
         on_delete=models.CASCADE,
-        db_index=True
-    )
-    estado_pago = models.ForeignKey(
-        EstadoPago,
+        related_name='pagos'    
+        )
+    metodo_pago = models.ForeignKey(
+        MedioPago,
         on_delete=models.PROTECT
+    )
+    registrado_por = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='pagos_venta_registrados'
+    )
+
+    class Meta:
+        indexes = [
+            models.Index(fields=['orden','-fecha']),
+            #models.Index(fields=['estado_pago','fecha']),
+        ]
+        ordering = ['-fecha']
+        verbose_name = 'Pago de venta'
+        verbose_name_plural = 'Pagos de venta'
+    
+    def clean(self):
+        if self.monto <= 0:
+            raise ValidationError("El monto debe ser mayor a cero")
+        
+        total_pagado = self.orden.pagos.exclude(id=self.id).aggregate(
+            Sum('monto')
+        )['monto__sum'] or 0
+
+        if total_pagado + self.monto > self.orden.total:
+            raise ValidationError(f"El pago excede el total. Saldo: ${self.orden.total - total_pagado}")
+        
+    def save(self,*args,**kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+        # Actualizar el estado de la orden automáticamente
+        self.orden.actualizar_estado_pago()
+
+    def __str__(self):
+        return f"Pago #{self.id} - Monto: {self.monto}"
+
+class PagoCompra(models.Model):
+    fecha = models.DateTimeField(auto_now_add=True)
+    monto = models.DecimalField(decimal_places=2, max_digits=12)
+    nota = models.TextField(blank=True,null=True)
+    fecha_actualizacion = models.DateTimeField(auto_now=True)
+    orden_compra = models.ForeignKey(
+        OrdenCompra,
+        on_delete=models.CASCADE,
+        related_name='pagos'
     )
     metodo_pago = models.ForeignKey(
         MedioPago,
         on_delete=models.PROTECT
     )
+    registrado_por = models.ForeignKey(
+        User,
+        on_delete=models.PROTECT,
+        related_name='pagos_compra_registrados'
+    )
 
-    fecha = models.DateTimeField(auto_now_add=True)
-    monto = models.DecimalField(decimal_places=3, max_digits=65)
+    class Meta:
+        indexes = [
+            models.Index(fields=['orden_compra','-fecha']),
+        ]
+        ordering = ['-fecha']
+        verbose_name = 'Pago de compra'
+        verbose_name_plural = 'Pagos de compra'
+    
+    def clean(self):
+        if self.monto <= 0:
+            raise ValidationError("El monto debe ser mayor a cero")
+        
+        total_pagado = self.orden_compra.pagos.exclude(id=self.id).aggregate(
+            Sum('monto')
+        )['monto__sum'] or 0
+
+        if total_pagado + self.monto > self.orden_compra.total:
+            raise ValidationError(f"El pago excede el total. Saldo pendiente: {self.orden_compra.total - total_pagado}")
+    
+    def save(self, *args, **kwargs):
+        self.full_clean()
+        super().save(*args, **kwargs)
+        # Actualizar el estado de la orden automáticamente
+        self.orden_compra.actualizar_estado_pago()
 
     def __str__(self):
-        return self.id
-
+        return f"Pago #{self.id} - Monto: {self.monto}"

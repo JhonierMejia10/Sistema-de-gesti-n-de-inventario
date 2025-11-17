@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'categorias',
     'clientes',
     'compras',
+    'core',
     'inventario',
     'pagos',
     'pedidos',

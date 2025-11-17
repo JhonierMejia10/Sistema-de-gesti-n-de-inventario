@@ -8,6 +8,7 @@ from rest_framework import viewsets
 class ProveedorViewSet(viewsets.ModelViewSet):
     queryset = Proveedor.objects.all()
     serializer_class = ProveedorSerializer
+    lookup_field = 'slug'
     permission_classes = [PermitirTodo]
 
 class EstadoCompraViewSet(viewsets.ModelViewSet):
