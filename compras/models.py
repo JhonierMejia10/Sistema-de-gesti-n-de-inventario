@@ -5,7 +5,7 @@ from core.models import EstadoPago
 from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db.models import Sum
-
+from decimal import Decimal
 # Create your models here.
 
 class Proveedor(models.Model):
@@ -64,17 +64,20 @@ class OrdenCompra(models.Model):
     def saldo_pendiente(self):
         return self.total - self.total_pagado()
     
-    def actualizar_estado_pago(self):
-        total_pagado = self.total_pagado()
+    @property
+    def estado_pago_calculado(self):
+        """
+        Calcula el estado SIN modificar la BD.
+        El servicio es responsable de guardarlo.
+        """
+        total_pagado= self.total_pagado()
 
-        if total_pagado == 0:
-            self.estado_pago = EstadoPago.obtener_pendiente()
+        if total_pagado == Decimal('0'):
+            return EstadoPago.obtener_pendiente()
         elif total_pagado >= self.total:
-            self.estado_pago = EstadoPago.obtener_completado()
+            return EstadoPago.obtener_completado()
         else:
-            self.estado_pago = EstadoPago.obtener_abonado()
-        
-        self.save(update_fields=['estado_pago'])
+            return EstadoPago.obtener_abonado()
 
     def __str__(self):
         return f"Orden de compra #{self.id} realizada al proveedor ({self.proveedor.nombre}) el día {self.fecha_orden.strftime('%Y-%m-%d')}" 

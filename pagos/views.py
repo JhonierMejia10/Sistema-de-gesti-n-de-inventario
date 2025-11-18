@@ -1,15 +1,41 @@
-from rest_framework import viewsets
+from rest_framework import viewsets, status
+from rest_framework.response import Response
 from .models import  MedioPago, PagoVenta, PagoCompra
 from .serializers import MedioPagoSerializer,  PagoVentaSerializer
 from .permissions import PermitirTodo
+from .services import PagoService
+from django.core.exceptions import ValidationError
 
 # Create your views here.
 
 
-class PagoViewSet(viewsets.ModelViewSet):
+class PagoVentaViewSet(viewsets.ModelViewSet):
     queryset = PagoVenta.objects.all()
     serializer_class = PagoVentaSerializer
     permission_classes = [PermitirTodo]
+
+    def create(self, request, *args, **kwargs):
+        """
+        Sobrescribir create para usar el servicio
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        try:
+            service = PagoService()
+            pago = service.registrar_pago_venta(
+                orden=serializer.validated_data['orden'],
+                monto=serializer.validated_data['monto'],
+                metodo_pago=serializer.validated_data['metodo_pago'],
+                usuario=request.user,
+                nota=serializer.validated_data.get('nota','')
+            )
+
+            output_serializer = self.get_serializer(pago)
+            return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+        
+        except ValidationError as e:
+            return Response({'error' : str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
 class MedioPagoViewSet(viewsets.ModelViewSet):
     queryset = MedioPago.objects.all()

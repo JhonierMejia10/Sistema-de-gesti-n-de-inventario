@@ -5,6 +5,7 @@ from compras .models import OrdenCompra
 from django.contrib.auth.models import User
 from django.core.exceptions import ValidationError
 from django.db.models import Sum
+from decimal import Decimal
 
 # Create your models here.
 
@@ -46,21 +47,15 @@ class PagoVenta(models.Model):
         verbose_name_plural = 'Pagos de venta'
     
     def clean(self):
-        if self.monto <= 0:
+        if self.monto <= Decimal('0'):
             raise ValidationError("El monto debe ser mayor a cero")
         
-        total_pagado = self.orden.pagos.exclude(id=self.id).aggregate(
-            Sum('monto')
-        )['monto__sum'] or 0
-
-        if total_pagado + self.monto > self.orden.total:
-            raise ValidationError(f"El pago excede el total. Saldo: ${self.orden.total - total_pagado}")
+        if self.monto > self.orden.saldo_pendiente():
+            raise ValidationError(f"El pago excede el saldo pendiente: ${self.orden.saldo_pendiente()}")
         
     def save(self,*args,**kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
-        # Actualizar el estado de la orden automáticamente
-        self.orden.actualizar_estado_pago()
 
     def __str__(self):
         return f"Pago #{self.id} - Monto: {self.monto}"
@@ -97,18 +92,12 @@ class PagoCompra(models.Model):
         if self.monto <= 0:
             raise ValidationError("El monto debe ser mayor a cero")
         
-        total_pagado = self.orden_compra.pagos.exclude(id=self.id).aggregate(
-            Sum('monto')
-        )['monto__sum'] or 0
-
-        if total_pagado + self.monto > self.orden_compra.total:
-            raise ValidationError(f"El pago excede el total. Saldo pendiente: {self.orden_compra.total - total_pagado}")
-    
+        if self.monto > self.orden_compra.saldo_pendiente():
+            raise ValidationError(f"El pago excede el saldo pendiente: ${self.orden_compra.saldo_pendiente()}")
+            
     def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
-        # Actualizar el estado de la orden automáticamente
-        self.orden_compra.actualizar_estado_pago()
 
     def __str__(self):
         return f"Pago #{self.id} - Monto: {self.monto}"
