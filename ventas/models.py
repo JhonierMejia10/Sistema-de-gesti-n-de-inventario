@@ -91,7 +91,7 @@ class OrdenItem(models.Model):
         on_delete=models.CASCADE
     )
     cantidad = models.IntegerField()
-    precio = models.DecimalField(max_digits=12, decimal_places=2)
+    precio_unitario = models.DecimalField(max_digits=12, decimal_places=2)
 
     #Restricción para que se cree una sola instancia de producto por cada orden
     class Meta:
