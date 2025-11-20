@@ -1,9 +1,9 @@
-from .views import StockViewSet, TipoMovimientoViewSet, MovimientoViewSet
+from .views import StockViewSet, TipoMovimientoViewSet, MovimientoViewSetOnlyView
 from rest_framework import routers
 from django.urls import path, include
 
 router = routers.DefaultRouter()
-router.register(r'movimientos', MovimientoViewSet, basename='movimientos')
+router.register(r'movimientos', MovimientoViewSetOnlyView, basename='movimientos')
 router.register(r'tipos-de-movimiento', TipoMovimientoViewSet, basename='tipos-movimientos')
 router.register(r'stocks', StockViewSet, basename='stocks')
 

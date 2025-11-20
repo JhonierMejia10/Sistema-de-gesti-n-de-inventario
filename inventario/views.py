@@ -15,7 +15,7 @@ class TipoMovimientoViewSet(viewsets.ModelViewSet):
     serializer_class = TipoMovimientoSerializer
     permission_classes = [PermitirTodo]
 
-class MovimientoViewSet(viewsets.ModelViewSet):
+class MovimientoViewSetOnlyView(viewsets.ReadOnlyModelViewSet):
     queryset = Movimiento.objects.all()
     serializer_class = MovimientoSerializer
     permission_classes = [PermitirTodo]

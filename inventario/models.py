@@ -10,6 +10,8 @@ class Stock(models.Model):
     producto = models.ForeignKey(
         Producto,
         on_delete=models.CASCADE,
+        blank=False,
+        null=False
     )
     almacen = models.ForeignKey(
         Almacen,

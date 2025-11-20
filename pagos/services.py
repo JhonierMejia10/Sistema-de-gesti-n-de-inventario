@@ -1,5 +1,4 @@
 from django.db import transaction
-from decimal import Decimal
 from django.core.exceptions import ValidationError
 from ventas.models import Orden
 from .models import PagoVenta

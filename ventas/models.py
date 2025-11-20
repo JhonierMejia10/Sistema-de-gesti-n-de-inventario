@@ -28,7 +28,6 @@ class Carrito(models.Model):
     )
     cantidad = models.IntegerField()
     precio_unitario = models.DecimalField(decimal_places=2, max_digits=12)
-    precio = models.DecimalField(decimal_places=2, max_digits=12)
 
     class Meta:
         unique_together = ('producto','cliente')
