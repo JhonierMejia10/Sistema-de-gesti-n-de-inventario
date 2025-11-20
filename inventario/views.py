@@ -1,6 +1,6 @@
 from rest_framework import viewsets
-from .models import Stock, TipoMovimiento, Movimiento, MovimientoItem
-from .serializers import StockSerializer, TipoMovimientoSerializer ,MovimientoSerializer, MovimientoItemSerializer 
+from .models import Stock, TipoMovimiento, Movimiento
+from .serializers import StockSerializer, TipoMovimientoSerializer ,MovimientoSerializer
 from .permissions import PermitirTodo
 
 # Create your views here.
@@ -19,9 +19,5 @@ class MovimientoViewSet(viewsets.ModelViewSet):
     queryset = Movimiento.objects.all()
     serializer_class = MovimientoSerializer
     permission_classes = [PermitirTodo]
-    
-class MovimientoItemViewSet(viewsets.ModelViewSet):
-    queryset = MovimientoItem.objects.all()
-    serializer_class = MovimientoItemSerializer
-    permission_classes = [PermitirTodo]
+
     
