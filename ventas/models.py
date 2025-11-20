@@ -41,7 +41,9 @@ class Orden(models.Model):
     )
     cliente = models.ForeignKey(
         Cliente,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True
     )
     usuario_creador = models.ForeignKey(
         User,

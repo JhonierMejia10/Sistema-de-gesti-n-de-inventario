@@ -4,6 +4,7 @@ from .serializers import CarritoSerializer, OrdenSerializer, OrdenItemSerializer
 from .models import Carrito, Orden, OrdenItem
 from .permissions import PermitirTodo, PermitirAdmin
 from rest_framework.response import Response
+from core.models import EstadoPago
 
 
 from rest_framework.decorators import action
@@ -64,14 +65,14 @@ class OrdenViewSet(viewsets.ModelViewSet):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        total = sum(item.precio for item in items_carrito)
+        total = sum(item.precio_unitario for item in items_carrito)
 
         #Se crea un registro con la información del carrito que se guardará en la tabla Ordenes
         orden_data = {
             'cliente': cliente_id,
             'usuario_creador': request.user.id,
             'total': total,
-            'estado_pago': 'Pendiente',
+            'estado_pago': EstadoPago.obtener_pendiente().id,
         }
 
         serializer = OrdenSerializer(data=orden_data)
@@ -84,7 +85,7 @@ class OrdenViewSet(viewsets.ModelViewSet):
                 orden=orden,
                 producto=item.producto,
                 cantidad=item.cantidad,
-                precio=item.precio,
+                precio=item.precio_unitario,
             )        
 
         items_carrito.delete()
