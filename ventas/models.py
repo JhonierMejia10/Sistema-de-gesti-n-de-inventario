@@ -2,15 +2,14 @@ from django.db import models
 from clientes.models import Cliente
 from productos.models import Producto
 from core.models import EstadoPago
+from inventario.models import Almacen
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from decimal import Decimal
 
-# Create your models here.
 
-
-class TipoVenta(models.Model):
-    nombre = models.CharField(max_length=100)
+class TipoEntrega(models.Model):
+    nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.TextField(blank=True, null=True)
 
 class Carrito(models.Model):
@@ -20,7 +19,22 @@ class Carrito(models.Model):
     )
     cliente = models.ForeignKey(
         Cliente,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True
+    )
+    almacen = models.ForeignKey(
+        Almacen,
+        on_delete=models.CASCADE,
+        default=1
+    )
+    fecha_creacion = models.DateTimeField(auto_now_add=True)
+    
+class CarritoItem(models.Model):
+    carrito = models.ForeignKey(
+        Carrito,
+        on_delete=models.CASCADE,
+        related_name='items'
     )
     producto = models.ForeignKey(
         Producto,
@@ -30,14 +44,21 @@ class Carrito(models.Model):
     precio_unitario = models.DecimalField(decimal_places=2, max_digits=12)
 
     class Meta:
-        unique_together = ('producto','cliente')
-    
+        unique_together = ('carrito','producto')
+
 class Orden(models.Model):
     estado_pago = models.ForeignKey(
         EstadoPago,
         on_delete=models.PROTECT,
         db_index=True,
         related_name='ordenes_venta'
+    )
+    almacen = models.ForeignKey(
+        Almacen,
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False,
+        default=1
     )
     cliente = models.ForeignKey(
         Cliente,
@@ -51,7 +72,7 @@ class Orden(models.Model):
         related_name='ordenes_creadas'
     )
     tipo_venta = models.ForeignKey(
-        TipoVenta,
+        TipoEntrega,
         on_delete=models.CASCADE
     )
     total = models.DecimalField(default=0, max_digits=12, decimal_places=2)

@@ -1,12 +1,14 @@
 from django.urls import path, include
 from rest_framework import routers
-from .views import CarritoViewSet, OrdenViewSet, OrdenItemViewSet
+from .views import TipoEntregaViewSet, OrdenViewSet, OrdenItemViewSet, CarritoAPIView
 
 router = routers.DefaultRouter()
-router.register(r'carrito', CarritoViewSet, basename='carrito')
+router.register(r'tipos-de-entrega', TipoEntregaViewSet, basename='tipos-de-entrega')
 router.register(r'ordenes', OrdenViewSet, basename='ordenes'),
-router.register(r'orden-items', OrdenItemViewSet, basename='orden-items'),
+router.register(r'orden-items', OrdenItemViewSet, basename='orden-items')
 
 urlpatterns = [
     path('', include(router.urls)),
+    path('carrito', CarritoAPIView.as_view()),
+    path('carrito/<int:id>', CarritoAPIView.as_view()),
 ]
