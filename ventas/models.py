@@ -102,7 +102,6 @@ class Orden(models.Model):
     def __str__(self):
         return f"Orden #{self.id}"
 
-    
 class OrdenItem(models.Model):
     orden = models.ForeignKey(
         Orden,

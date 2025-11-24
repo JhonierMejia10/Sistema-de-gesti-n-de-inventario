@@ -8,15 +8,6 @@ class TipoEntregaSerializer(serializers.ModelSerializer):
         model = TipoEntrega
         fields = '__all__'
 
-        def validate_nombre(self, value):
-            qs = TipoEntrega.objects.filter(mombre__iexact = value)
-
-            if self.instance:
-                qs = qs.exclude(id=self.instance.id)
-            if qs.exists():
-                raise serializers.ValidationError("Este tipo de venta ya existe.")
-            return value
-
 class AgregarCarritoSerializer(serializers.Serializer):
     cliente_id = serializers.IntegerField(required=False, allow_null=True)
     almacen_id = serializers.IntegerField(required=True)

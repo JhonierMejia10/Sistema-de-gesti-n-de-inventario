@@ -15,9 +15,11 @@ class Stock(models.Model):
     )
     almacen = models.ForeignKey(
         Almacen,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False
     )
-    cantidad_en_mano = models.IntegerField()
+    cantidad_en_mano = models.PositiveIntegerField(blank=False,null=False)
 
     class Meta:
         unique_together = ['producto','almacen']
@@ -27,18 +29,15 @@ class Stock(models.Model):
 
     def __str__(self):
         return f"Producto: {self.producto.nombre} - Almacen: {self.almacen.nombre_almacen} - Cantidad: {self.cantidad_en_mano} unidades"
-    
-    
 
 class TipoMovimiento(models.Model):
-    nombre = models.CharField(max_length=255, db_index=True, unique=True)
+    nombre = models.CharField(max_length=255, db_index=True, unique=True, blank=False, null=False)
     descripcion = models.TextField(blank=True, null=True)
 
     def __str__(self):
         return self.nombre
     
 class Movimiento(models.Model):
-    
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     usuario = models.ForeignKey(
         User,
