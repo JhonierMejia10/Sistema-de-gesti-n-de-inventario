@@ -37,25 +37,22 @@ class ProductoViewSet(viewsets.ModelViewSet):
         try:
             producto = ProductosService.crear_producto_service(
                 nombre=data["nombre"],
-                descripcion=data["descripcion"],
+                descripcion=data.get("descripcion"),
                 precio=data["precio"],
-                foto=data["foto"],
+                foto=data.get("foto"),
                 categoria=data["categoria"],
-                marca=data["marca"],
+                marca=data.get("marca"),
                 tipo_producto=data["tipo_producto"],
-                nota=data["nota"]
+                nota=data.get("nota"),
+                stock_inicial=data["stock_inicial"],
+                almacen=data["almacen"]
             )
         except Exception as e:
             return Response(
                 {'error':str(e)},
                 status=status.HTTP_400_BAD_REQUEST
             )
-        return Response(
-            {"mensaje":"Producto creado exitosamente.",
-             "producto":{producto.nombre},
-            "precio":{producto.precio},
-            "tipo_producto":{producto.tipo_producto},
-            "categoria":{producto.categoria}
-             }, status=status.HTTP_201_CREATED
-        )
+        
+        producto_serializer = ProductoSerializer(producto)
+        return Response(ProductoSerializer.data, status=status.HTTP_201_CREATED)
 

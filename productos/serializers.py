@@ -23,13 +23,16 @@ class CrearProductoSerializer(serializers.Serializer):
     precio = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=0 ,allow_null=False)
     foto = serializers.ImageField(required=False)
     categoria = serializers.PrimaryKeyRelatedField(
-        queryset = Categoria.objects.all()
+        queryset = Categoria.objects.all(), 
+        required=True
     )
     marca = serializers.PrimaryKeyRelatedField(
-        queryset = Marca.objects.all()
+        queryset = Marca.objects.all(), 
+        required=False
     )
     tipo_producto = serializers.PrimaryKeyRelatedField(
-        queryset = TipoProducto.objects.all()
+        queryset = TipoProducto.objects.all(), 
+        required=True
     )
     nota = serializers.CharField(required=False, allow_null=True, max_length=None)
     stock_inicial = serializers.IntegerField(min_value=0, required=True)
@@ -38,13 +41,6 @@ class CrearProductoSerializer(serializers.Serializer):
         required = True
     )
 
-    def validate(self, value):
-        qs = Producto.objects.filter(nombre__iexact=value)
-        if self.instance:
-            qs = qs.exclude(id=self.instance.id)
-        if qs.exists():
-            raise serializers.ValidationError("Ya existe un producto con este nombre.")
-
 class ProductoSerializer(serializers.ModelSerializer):
 
     class Meta:
@@ -52,17 +48,10 @@ class ProductoSerializer(serializers.ModelSerializer):
         fields = ['nombre','descripcion','precio','tipo_producto','categoria','marca','foto','nota']
         read_only_fields = ['id','fecha_creacion']
 
-        extra_kwargs = {
-            'nombre':{'required':True},
-            'precio':{'required':True},
-            'categoria':{'required':True}
-        }
-
 class TipoAtrubutoProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoAtributoProducto
         fields = ['nombre']
-
 
 class AtributoProductoSerializer(serializers.ModelSerializer):
     class Meta:

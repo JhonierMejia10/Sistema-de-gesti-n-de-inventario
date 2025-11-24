@@ -11,16 +11,6 @@ class ProveedorSerializer(serializers.ModelSerializer):
             'nombre':{'required':True},
             'slug':{'read_only':True}
         }
-    
-    def validate_nombre(self, value):
-        qs = Proveedor.objects.filter(nombre__iexact=value)
-
-        if self.instance:
-            qs = qs.exclude(id=self.instance.id)
-        if qs.exists():
-            raise serializers.ValidationError("Ya existe un proveedor con este nombre.")
-        return value
-        
 
 class EstadoCompraSerializer(serializers.ModelSerializer):
     class Meta:
@@ -30,15 +20,6 @@ class EstadoCompraSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'nombre':{'required':True}
         }
-
-        def validate_nombre(self, value):
-            qs = EstadoCompra.objects.filter(nombre__iexact=value)
-
-            if self.instance:
-                qs = qs.exclude(id=self.instance.id)
-            if qs.exists():
-                raise serializers.ValidationError("Este estado de compra ya existe.")
-            return value            
 
 class OrdenCompraSerializer(serializers.ModelSerializer):
     class Meta:
