@@ -31,7 +31,6 @@ class OrdenCompraSerializer(serializers.ModelSerializer):
             'usuario_creador':{'read_only':True}
         }
 
-
 class ItemoOrdenCompraSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemOrdenCompra
