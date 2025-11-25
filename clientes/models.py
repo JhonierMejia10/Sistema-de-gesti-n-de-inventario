@@ -23,7 +23,7 @@ class Cliente(models.Model):
         on_delete=models.CASCADE,
         related_name='clientes'
     )
-    nombre = models.CharField(max_length=100, null=False)
+    nombre = models.CharField(max_length=100, blank=False ,null=False)
     telefono = models.CharField(max_length=50, null=True, blank=True)
     correo = models.EmailField(blank=True, null=True)
     direccion = models.CharField(max_length=255, null=True, blank=True)

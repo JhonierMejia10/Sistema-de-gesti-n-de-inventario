@@ -39,11 +39,14 @@ class OrdenCompra(models.Model):
         EstadoPago,
         on_delete=models.PROTECT,
         db_index=True,
-        related_name='ordenes_compra'
+        related_name='ordenes_compra',
+        default=3
     )
     ubicacion_entrega = models.ForeignKey(
         Almacen,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        blank=False,
+        null=False
     )
     usuario_creador = models.ForeignKey(
         User,
@@ -53,9 +56,10 @@ class OrdenCompra(models.Model):
         Proveedor,
         on_delete=models.CASCADE
     )
-    estado = models.ForeignKey(
+    estado_compra = models.ForeignKey(
         EstadoCompra,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        default=1
     )
 
     def total_pagado(self):

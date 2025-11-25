@@ -7,7 +7,6 @@ class UbicacionSerializer(serializers.ModelSerializer):
         model = Ubicacion
         fields = '__all__'
     
-
 class AlmacenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Almacen

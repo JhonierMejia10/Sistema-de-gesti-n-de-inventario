@@ -8,7 +8,6 @@ class TipoClienteSerializer(serializers.ModelSerializer):
         fields = ['nombre','descripcion']
 
         extra_kwargs = {
-            'nombre': {'required':True},
             'id':{'read_only':True}
         }
 
@@ -18,8 +17,4 @@ class ClienteSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id']
 
-        extra_kwargs = {
-            'nombre': {'required':True}
-        }
-    
 
