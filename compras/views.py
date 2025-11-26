@@ -24,7 +24,7 @@ class EstadoCompraViewSet(viewsets.ModelViewSet):
 
 class OrdenCompraViewSet(viewsets.ModelViewSet):
     queryset = OrdenCompra.objects.all()
-    serializer_class = []
+    serializer_class = OrdenCompraSerializer
     permission_classes = [PermitirTodo]
 
     def get_serializer_class(self, request):
