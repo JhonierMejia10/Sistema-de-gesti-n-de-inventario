@@ -21,7 +21,7 @@ class Marca(models.Model):
 class Producto(models.Model):
     nombre = models.CharField(max_length=255, db_index=True,blank=False, null=False, unique=True)
     descripcion = models.TextField(blank=True, null=True)
-    precio = models.DecimalField(max_digits=12, decimal_places=3, null=False)
+    precio = models.DecimalField(max_digits=12, decimal_places=2, null=False)
     fecha_creacion = models.DateTimeField(auto_now_add=True)
     foto = models.ImageField(upload_to='productos/', blank=True, null=True)
     is_active = models.BooleanField(default=True)

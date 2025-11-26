@@ -1,8 +1,10 @@
 from rest_framework import serializers
 from .models import Proveedor, EstadoCompra, OrdenCompra, ItemOrdenCompra
+from productos.models import Producto
+from inventario.models import Almacen
+
 
 class ProveedorSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Proveedor
         fields = '__all__'
@@ -11,17 +13,6 @@ class ProveedorSerializer(serializers.ModelSerializer):
             'nombre':{'required':True},
             'slug':{'read_only':True}
         }
-    
-    def validate_nombre(self,validate_data):
-        if self.instance:
-            if Proveedor.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
-                raise serializers.ValidationError("Ya existe un proveedor con este nombre.")
-
-        else:
-            if Proveedor.objects.filter(nombre=validate_data).exists():
-                raise serializers.ValidationError("Ya existe un proveedor con este nombre.")
-        return validate_data
-        
 
 class EstadoCompraSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,17 +23,7 @@ class EstadoCompraSerializer(serializers.ModelSerializer):
             'nombre':{'required':True}
         }
 
-        def validate_nombre(self,validate_data):
-
-            if self.instance:
-                if EstadoCompra.objects.filter(nombre=validate_data).exclude(id=self.instance.id).exists():
-                    raise serializers.ValidationError("Ya existe un estado de compra con este nombre.")
-            else:
-                if EstadoCompra.objects.filter(nombre=validate_data):
-                    raise serializers.ValidationError("Ya existe un estado de compra con este nombre.")
-            return validate_data
-
-
+"""Serializers usados if action is not 'create'"""
 class OrdenCompraSerializer(serializers.ModelSerializer):
     class Meta:
         model = OrdenCompra
@@ -53,11 +34,38 @@ class OrdenCompraSerializer(serializers.ModelSerializer):
             'usuario_creador':{'read_only':True}
         }
 
-
 class ItemoOrdenCompraSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemOrdenCompra
         fields = ['producto','cantidad','precio_unitario','orden_compra']
 
 
-    
+"""Serializers usados if action = 'create'"""
+class ItemCompraSerializer(serializers.Serializer):
+    producto = serializers.PrimaryKeyRelatedField(
+        queryset = Producto.objects.all()
+    )
+    cantidad = serializers.IntegerField(min_value=1)
+    precio_unitario = serializers.DecimalField(
+        max_digits=12,
+        decimal_places=2,
+        min_value=0.01
+    )
+
+class CrearCompraSerializer(serializers.Serializer):
+    ubicacion_entrega = serializers.PrimaryKeyRelatedField(
+        queryset = Almacen.objects.all()
+    )
+    proveedor = serializers.PrimaryKeyRelatedField(
+        queryset = Proveedor.objects.all()
+    )
+    estado_compra = serializers.PrimaryKeyRelatedField(
+        queryset = EstadoCompra.objects.all()
+    )
+    items = ItemCompraSerializer(many=True)
+    nota = serializers.CharField(required=False, allow_null=True)
+
+    def validate_items(self, value):
+        if not value:
+            raise serializers.ValidationError("Debes incluir al menos un producto.")
+        return value

@@ -6,15 +6,15 @@ class Ubicacion(models.Model):
     pais = models.CharField(max_length=70, default='Colombia')
     ciudad = models.CharField(max_length=100, default='Medellín', blank=True, null=True)
     barrio = models.CharField(max_length=255, blank=True, null=True)
-    direccion = models.CharField(max_length=255, blank=True, null=True)
 
     def __str__(self):
-        return f"{self.ciudad} - {self.barrio} - {self.direccion}"
+        return f"{self.ciudad} - {self.barrio}"
 
 class Almacen(models.Model):
     nombre = models.CharField(max_length=255, blank=False, null=False)
     descripcion = models.TextField(blank=True, null=True)
-    slug = models.SlugField(max_length=255, unique=True, blank=True, null=True)
+    slug = models.SlugField(max_length=255, unique=True, blank=True)
+    direccion = models.CharField(max_length=255, blank=True, null=True)
     ubicacion = models.ForeignKey(
         Ubicacion,
         on_delete=models.CASCADE,

@@ -1,9 +1,11 @@
 from django.shortcuts import render
-from django.http import JsonResponse
+from rest_framework.response import Response
 from .models import TipoProducto, Marca, Producto, TipoAtributoProducto, AtributoProducto
-from .serializers import TipoProductoSerializer, MarcaSerializer , ProductoSerializer, TipoAtrubutoProductoSerializer, AtributoProductoSerializer
+from .serializers import TipoProductoSerializer, MarcaSerializer ,CrearProductoSerializer , ProductoSerializer, TipoAtrubutoProductoSerializer, AtributoProductoSerializer
 from .permissions import PermitirTodo
-from rest_framework import viewsets
+from .services import ProductosService
+from rest_framework import viewsets, status
+from rest_framework.views import APIView
 # Create your views here.
 
 
@@ -21,4 +23,36 @@ class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
     permission_classes = [PermitirTodo]
-    
+
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CrearProductoSerializer
+        return ProductoSerializer
+
+    def create(self, request):
+        serializer = CrearProductoSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+
+        try:
+            producto = ProductosService.crear_producto_service(
+                nombre=data["nombre"],
+                descripcion=data.get("descripcion"),
+                precio=data["precio"],
+                foto=data.get("foto"),
+                categoria=data["categoria"],
+                marca=data.get("marca"),
+                tipo_producto=data["tipo_producto"],
+                nota=data.get("nota"),
+                stock_inicial=data["stock_inicial"],
+                almacen=data["almacen"]
+            )
+        except Exception as e:
+            return Response(
+                {'error':str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        
+        producto_serializer = ProductoSerializer(producto)
+        return Response(ProductoSerializer.data, status=status.HTTP_201_CREATED)
+
