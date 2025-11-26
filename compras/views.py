@@ -27,7 +27,7 @@ class OrdenCompraViewSet(viewsets.ModelViewSet):
     serializer_class = OrdenCompraSerializer
     permission_classes = [PermitirTodo]
 
-    def get_serializer_class(self, request):
+    def get_serializer_class(self):
         if self.action == 'create':
             return CrearCompraSerializer
         return OrdenCompraSerializer
@@ -43,7 +43,7 @@ class OrdenCompraViewSet(viewsets.ModelViewSet):
                 proveedor=data['proveedor'],
                 estado_compra=data['estado_compra'],
                 items=data['items'],
-                usuario_creador=request.User,
+                usuario_creador=request.user,
                 nota=data.get('nota')
             )
         except ValidationError as e:
