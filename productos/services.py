@@ -24,7 +24,7 @@ class ProductosService:
                 nota=nota
             )
         except:
-            raise ValidationError({'error':"No se pudo crear el producto,"})
+            raise ValidationError({'error':"No se pudo crear el producto. Compruebe los datos ingresados."}, status=status.HTTP_400_BAD_REQUEST)
 
         try:
             stock_inicial = Stock.objects.create(

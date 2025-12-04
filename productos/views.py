@@ -54,5 +54,5 @@ class ProductoViewSet(viewsets.ModelViewSet):
             )
         
         producto_serializer = ProductoSerializer(producto)
-        return Response(ProductoSerializer.data, status=status.HTTP_201_CREATED)
+        return Response(producto_serializer.data, status=status.HTTP_201_CREATED)
 
