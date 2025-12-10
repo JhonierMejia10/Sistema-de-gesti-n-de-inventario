@@ -8,16 +8,14 @@ class StockSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class TipoMovimientoSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = TipoMovimiento
         fields = '__all__'
     
 class MovimientoSerializer(serializers.ModelSerializer):
-
     class Meta:
         model = Movimiento
-        fields = ['tipo_movimiento','fecha_creacion','usuario','nota']
+        fields = '__all__'
 
         extra_kwargs = {
             'fecha_creacion':{'read_only':True},

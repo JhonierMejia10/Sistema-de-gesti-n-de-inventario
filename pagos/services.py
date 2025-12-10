@@ -7,7 +7,7 @@ from compras.models import OrdenCompra
 class PagoService:
 
     @transaction.atomic
-    def registrar_pago_venta(self, orden, monto, metodo_pago, usuario, nota=''):
+    def registrar_pago_venta(self, orden, monto, metodo_pago, usuario, nota=None):
         """
         Registra un pago y actualiza el estado de la orden de venta ATÓMICAMENTE.
         """

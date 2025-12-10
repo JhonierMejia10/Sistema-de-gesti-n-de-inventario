@@ -69,3 +69,25 @@ class CrearCompraSerializer(serializers.Serializer):
         if not value:
             raise serializers.ValidationError("Debes incluir al menos un producto.")
         return value
+    
+
+class ActualizarCompraSerializer(serializers.Serializer):
+    ubicacion_entrega = serializers.PrimaryKeyRelatedField(
+        queryset=Almacen.objects.all(),
+        required=False
+    )
+    proveedor = serializers.PrimaryKeyRelatedField(
+        queryset=Proveedor.objects.all(),
+        required=False
+    )
+    estado_compra = serializers.PrimaryKeyRelatedField(
+        queryset=EstadoCompra.objects.all(),
+        required=False
+    )
+    items = ItemCompraSerializer(many=True, required=False)
+    nota = serializers.CharField(required=False, allow_null=True, allow_blank=True)
+
+    def validate_items(self, value):
+        if value is not None and len(value) == 0:
+            raise serializers.ValidationError("Si incluyes items, debe haber al menos uno.")
+        return value
