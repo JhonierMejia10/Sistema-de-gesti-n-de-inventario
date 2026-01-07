@@ -182,5 +182,5 @@ class CompraService:
                 saldo_nuevo=saldo_nuevo,
                 content_type=ContentType.objects.get_for_model(OrdenCompra),
                 object_id=orden.id,
-                nota=f"Recepción de Orden de Compra #{orden.id}"
+                nota=f"Entrada por orden de compra #{orden.id}"
             )
