@@ -1,10 +1,11 @@
 from django.urls import path
 from rest_framework import routers
-from .views import PagoVentaViewSet, MedioPagoViewSet
+from .views import MedioPagoViewSet, PagoVentaViewSet, PagoCompra
 
 
 router = routers.DefaultRouter()
-router.register(r'pagos', PagoVentaViewSet, basename='pago')
+router.register(r'pagos-de-compras', PagoVentaViewSet, basename='pagos de compras')
 router.register(r'medios-de-pago', MedioPagoViewSet, basename='medio-pago')
+router.register(r'pagos-de-ventas', PagoVentaViewSet, basename='pagos de ventas')
 
 urlpatterns = router.urls
