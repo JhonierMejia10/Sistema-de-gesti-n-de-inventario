@@ -2,6 +2,7 @@ from rest_framework import serializers
 from .models import Proveedor, EstadoCompra, OrdenCompra, ItemOrdenCompra
 from productos.models import Producto
 from inventario.models import Almacen
+from .services import CompraService
 
 
 class ProveedorSerializer(serializers.ModelSerializer):
@@ -24,21 +25,25 @@ class EstadoCompraSerializer(serializers.ModelSerializer):
         }
 
 """Serializers usados if action is not 'create'"""
-class OrdenCompraSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = OrdenCompra
-        fields = '__all__'
-
-        extra_kwargs = {
-            'fecha_orden':{'read_only':True},
-            'usuario_creador':{'read_only':True}
-        }
-
-class ItemoOrdenCompraSerializer(serializers.ModelSerializer):
+class ItemOrdenCompraSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemOrdenCompra
-        fields = ['producto','cantidad','precio_unitario','orden_compra']
+        fields = ["id", "producto", "cantidad", "precio_unitario"]
 
+
+class OrdenCompraSerializer(serializers.ModelSerializer):
+    items = ItemOrdenCompraSerializer(many=True, required=False)
+    items_a_eliminar = serializers.ListField(
+        child=serializers.IntegerField(), required=False, write_only=True
+    )
+
+    class Meta:
+        model = OrdenCompra
+        fields = "__all__"
+
+    def update(self, instance, validated_data):
+        usuario = self.context["request"].user
+        return CompraService.actualizar_orden(instance, validated_data, usuario)
 
 """Serializers usados if action = 'create'"""
 class ItemCompraSerializer(serializers.Serializer):
@@ -70,24 +75,3 @@ class CrearCompraSerializer(serializers.Serializer):
             raise serializers.ValidationError("Debes incluir al menos un producto.")
         return value
     
-
-class ActualizarCompraSerializer(serializers.Serializer):
-    ubicacion_entrega = serializers.PrimaryKeyRelatedField(
-        queryset=Almacen.objects.all(),
-        required=False
-    )
-    proveedor = serializers.PrimaryKeyRelatedField(
-        queryset=Proveedor.objects.all(),
-        required=False
-    )
-    estado_compra = serializers.PrimaryKeyRelatedField(
-        queryset=EstadoCompra.objects.all(),
-        required=False
-    )
-    items = ItemCompraSerializer(many=True, required=False)
-    nota = serializers.CharField(required=False, allow_null=True, allow_blank=True)
-
-    def validate_items(self, value):
-        if value is not None and len(value) == 0:
-            raise serializers.ValidationError("Si incluyes items, debe haber al menos uno.")
-        return value

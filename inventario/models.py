@@ -73,7 +73,6 @@ class Movimiento(models.Model):
     )
     object_id = models.PositiveIntegerField(null=True, blank=True)
     referencia = GenericForeignKey('content_type','object_id')
-
     nota = models.TextField(blank=True, null=True)
 
     class Meta:
