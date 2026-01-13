@@ -2,7 +2,7 @@ from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
 from .serializers import TipoEntregaSerializer ,OrdenSerializer, OrdenItemSerializer
-from .models import TipoEntrega, Carrito, CarritoItem, Orden, OrdenItem
+from .models import TipoEntrega, Orden, OrdenItem
 from .permissions import PermitirTodo, PermitirAdmin
 from rest_framework.response import Response
 from core.models import EstadoPago

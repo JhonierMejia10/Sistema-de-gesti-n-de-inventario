@@ -12,40 +12,6 @@ class TipoEntrega(models.Model):
     nombre = models.CharField(max_length=100, unique=True)
     descripcion = models.TextField(blank=True, null=True)
 
-class Carrito(models.Model):
-    usuario_creador = models.ForeignKey(
-        User,
-        on_delete=models.CASCADE
-    )
-    cliente = models.ForeignKey(
-        Cliente,
-        on_delete=models.CASCADE,
-        blank=True,
-        null=True
-    )
-    almacen = models.ForeignKey(
-        Almacen,
-        on_delete=models.CASCADE,
-        default=1
-    )
-    fecha_creacion = models.DateTimeField(auto_now_add=True)
-    
-class CarritoItem(models.Model):
-    carrito = models.ForeignKey(
-        Carrito,
-        on_delete=models.CASCADE,
-        related_name='items'
-    )
-    producto = models.ForeignKey(
-        Producto,
-        on_delete=models.CASCADE
-    )
-    cantidad = models.IntegerField()
-    precio_unitario = models.DecimalField(decimal_places=2, max_digits=12)
-
-    class Meta:
-        unique_together = ('carrito','producto')
-
 class Orden(models.Model):
     estado_pago = models.ForeignKey(
         EstadoPago,
@@ -77,6 +43,7 @@ class Orden(models.Model):
     )
     total = models.DecimalField(default=0, max_digits=12, decimal_places=2)
     fecha = models.DateField(db_index=True, auto_now_add=True)
+    nota = models.TextField(blank=True, null=True)
 
     def total_pagado(self):
         return self.pagos.aggregate(Sum('monto'))['monto__sum'] or 0
