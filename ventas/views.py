@@ -23,70 +23,61 @@ class TipoEntregaViewSet(viewsets.ModelViewSet):
     permission_classes = [PermitirTodo]
 
 class CarritoAPIView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = []
 
     def get(self, request, id=None):
         if id is None:
             carritos = Carrito.objects.all()
             serializer = CarritoSerializer(carritos, many=True)
-            return Response(serializer.data, status=status.HTTP_200_OK)
-        else:
-            try:
-                carrito = Carrito.objects.get(id=id)
-                serializer = CarritoSerializer(carrito)
-                return Response(serializer.data, status=status.HTTP_200_OK)
-            except:
-                return Response({'error':"Carrito no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+            return Response(serializer.data)
+        try:
+            carrito = Carrito.objects.get(id=id)
+            serializer = CarritoSerializer(carrito)
+            return Response(serializer.data)
+        except Carrito.DoesNotExist:
+            return Response(
+                {'error': 'Carrito no encontrado'},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
     def post(self, request):
         serializer = AgregarCarritoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
 
-        """Prueba usando un usuario de la bd como usuario registrado (No usar en producción)
-        if request.user.is_authenticated:
-            usuario = request.user
-        else:
-            # Usa un usuario de prueba (cámbialo por un ID que exista en tu BD)
-            usuario = User.objects.get(id=1)
-        """
-        try:
-            usuario = request.user
-        except:
-            return Response("Debe autenticarse para poder interactuar con esta acción.")
+        usuario = request.user
 
-        #Cargar instancias desde los ids validos
-        cliente_id = data.get("cliente_id")
         cliente = None
-        if cliente_id is not None:
-            cliente = Cliente.objects.filter(id=cliente_id).first()
-        
+        if data.get("cliente_id"):
+            cliente = Cliente.objects.filter(id=data["cliente_id"]).first()
+            if not cliente:
+                return Response(
+                    {"error": "Cliente no existe"},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
         almacen = Almacen.objects.get(id=data["almacen_id"])
         producto = Producto.objects.get(id=data["producto_id"])
 
-        try:
-            item = OrdenVentaService.agregar_al_carrito(
-                usuario_creador=usuario,
-                cliente_id=cliente.id if cliente else None,
-                almacen=almacen,
-                producto=producto,
-                cantidad=data["cantidad"],
-                precio_unitario=data["precio_unitario"]
-            )
-        except Exception as e:
-            return Response(
-                {'error':str(e)},
-                status=status.HTTP_400_BAD_REQUEST
-            )
-        return Response(
-            {"mensaje": "Producto agregado al carrito exitosamente",
-            "carrito_item_id": item.id,
-            "producto": item.producto.nombre,
-            "cantidad_total_en_carrito": item.cantidad
-            },
-            status=status.HTTP_200_OK
+        item = OrdenVentaService.agregar_al_carrito(
+            usuario_creador=usuario,
+            cliente_id=cliente.id if cliente else None,
+            almacen=almacen,
+            producto=producto,
+            cantidad=data["cantidad"],
+            precio_unitario=data["precio_unitario"]
         )
-    
+
+        return Response(
+            {
+                "mensaje": "Producto agregado al carrito exitosamente",
+                "carrito_item_id": item.id,
+                "producto": item.producto.nombre,
+                "cantidad_total_en_carrito": item.cantidad
+            },
+            status=status.HTTP_201_CREATED
+        )
+
 
 
 #Endpoint viewset para las ordenes

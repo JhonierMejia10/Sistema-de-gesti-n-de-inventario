@@ -40,7 +40,6 @@ class PagoVenta(models.Model):
     class Meta:
         indexes = [
             models.Index(fields=['orden','-fecha']),
-            #models.Index(fields=['estado_pago','fecha']),
         ]
         ordering = ['-fecha']
         verbose_name = 'Pago de venta'
@@ -53,7 +52,7 @@ class PagoVenta(models.Model):
         if self.monto > self.orden.saldo_pendiente():
             raise ValidationError(f"El pago excede el saldo pendiente: ${self.orden.saldo_pendiente()}")
         
-    def save(self,*args,**kwargs):
+    def save(self, *args, **kwargs):
         self.full_clean()
         super().save(*args, **kwargs)
 
