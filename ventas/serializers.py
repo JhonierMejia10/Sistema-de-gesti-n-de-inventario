@@ -46,7 +46,7 @@ class CrearOrdenVentaSerializer(serializers.Serializer):
     almacen = serializers.PrimaryKeyRelatedField(
         queryset = Almacen.objects.all()
     )
-    EstadoPago = serializers.PrimaryKeyRelatedField(
+    Estado_pago = serializers.PrimaryKeyRelatedField(
         queryset = EstadoPago.objects.all()
     )
     cliente = serializers.PrimaryKeyRelatedField(
