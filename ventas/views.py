@@ -38,6 +38,24 @@ class OrdenVentaViewSet(viewsets.ModelViewSet):
         serializer = CrearOrdenVentaSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         data = serializer.validated_data
+
+        try:
+            ordenVenta = OrdenVentaService.crear_orden_venta_service(
+                almacen=data["almacen"],
+                estado_pago=data["estado_pago"],
+                items=data["items"],
+                cliente=data["cliente"],
+                usuario_creador=request.user,
+                tipo_venta=data["tipo_venta"],
+                nota=data.get('nota')
+            )
+        except ValidationError as e:
+            return Response(
+                {'error':str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+        ordenVenta_serializer = OrdenSerializer(ordenVenta)
+        return Response(ordenVenta_serializer.data, status=status.HTTP_201_CREATED)
         
 
         
