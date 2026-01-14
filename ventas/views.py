@@ -1,7 +1,7 @@
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
 from rest_framework.permissions import AllowAny
-from .serializers import TipoEntregaSerializer ,OrdenSerializer, OrdenItemSerializer
+from .serializers import TipoEntregaSerializer ,OrdenSerializer, OrdenItemSerializer, CrearOrdenVentaSerializer
 from .models import TipoEntrega, Orden, OrdenItem
 from .permissions import PermitirTodo, PermitirAdmin
 from rest_framework.response import Response
@@ -24,14 +24,25 @@ class TipoEntregaViewSet(viewsets.ModelViewSet):
 
 
 #Endpoint viewset para las ordenes
-class OrdenViewSet(viewsets.ModelViewSet):
+class OrdenVentaViewSet(viewsets.ModelViewSet):
     queryset = Orden.objects.all()
     serializer_class = OrdenSerializer
     permission_classes = [PermitirTodo]
 
+    def get_serializer_class(self):
+        if self.action == 'create':
+            return CrearOrdenVentaSerializer
+        return OrdenSerializer
+    
+    def create(self, request, *args, **kwargs):
+        serializer = CrearOrdenVentaSerializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        
+
         
 #Endpoint viewset para los items de las ordenes
-class OrdenItemViewSet(viewsets.ReadOnlyModelViewSet):
+class ItemOrdenViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = OrdenItem.objects.all()
     serializer_class = OrdenItemSerializer
     permission_classes = [PermitirAdmin]
