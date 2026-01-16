@@ -22,7 +22,6 @@ class TipoEntregaViewSet(viewsets.ModelViewSet):
     serializer_class = TipoEntregaSerializer
     permission_classes = [PermitirTodo]
 
-
 #Endpoint viewset para las ordenes
 class OrdenVentaViewSet(viewsets.ModelViewSet):
     queryset = Orden.objects.all()
@@ -46,7 +45,7 @@ class OrdenVentaViewSet(viewsets.ModelViewSet):
                 items=data["items"],
                 cliente=data["cliente"],
                 usuario_creador=request.user,
-                tipo_venta=data["tipo_venta"],
+                tipo_entrega=data["tipo_entrega"],
                 nota=data.get('nota')
             )
         except ValidationError as e:

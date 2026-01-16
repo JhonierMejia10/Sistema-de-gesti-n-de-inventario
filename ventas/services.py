@@ -15,7 +15,7 @@ class OrdenVentaService:
 
     @staticmethod
     @transaction.atomic
-    def crear_orden_venta_service(almacen, estado_pago, items, cliente, usuario_creador, tipo_venta, nota=None):
+    def crear_orden_venta_service(almacen, estado_pago, items, cliente, usuario_creador, tipo_entrega, nota=None):
         
         if not items or len(items) == 0:
             raise ValidationError("Debes incluir al menos un producto en la orden.")
@@ -32,7 +32,7 @@ class OrdenVentaService:
                 almacen = almacen,
                 cliente = cliente,
                 usuario_creador = usuario_creador,
-                tipo_venta = tipo_venta,
+                tipo_entrega = tipo_entrega,
                 total = total,
                 nota = nota
             )
@@ -55,17 +55,32 @@ class OrdenVentaService:
             except Exception as e:
                 raise ValidationError(f"Error al registrar producto {producto.nombre}: {str(e)}")
 
-            #Registrar nuevo stock
+            # Validar y actualizar stock existente
             try:
-                stock = Stock.objects.get_or_create(
-                    producto = producto,
-                    almacen = almacen,
-                    defaults={'cantidad_en_mano':cantidad}
+                # Intentar obtener el stock existente
+                stock = Stock.objects.get(
+                    producto=producto,
+                    almacen=almacen
                 )
+            
+                # Validar que haya stock suficiente
+                if stock.cantidad_en_mano < cantidad:
+                    raise ValidationError(
+                    f"Stock insuficiente para {producto.nombre} en el almacén. "
+                    f"Disponible: {stock.cantidad_en_mano}, Solicitado: {cantidad}"
+                )
+            
+                # Guardar saldo anterior y restar la cantidad
                 saldo_anterior = stock.cantidad_en_mano
                 stock.cantidad_en_mano -= cantidad
                 stock.save()
                 saldo_nuevo = stock.cantidad_en_mano
+            
+            except Stock.DoesNotExist:
+                raise ValidationError(
+                    f"No existe stock registrado para el producto {producto.nombre} "
+                    f"en el almacén seleccionado."
+                )
             except Exception as e:
                 raise ValidationError(f"No se pudo actualizar el stock de {producto.nombre}: {str(e)}")
 
@@ -73,7 +88,7 @@ class OrdenVentaService:
             try:
                 Movimiento.objects.create(
                     usuario = usuario_creador,
-                    tipo_movimiento = 2,
+                    tipo_movimiento_id = 2,
                     producto = producto,
                     almacen = almacen,
                     cantidad = cantidad,
@@ -88,47 +103,45 @@ class OrdenVentaService:
         return orden_venta
     
 
-@staticmethod
-@transaction.atomic
-def actualizar_orden_venta(instance, data, usuario):
-    """
-    Docstring para actualizar_orden_venta, actualizar campos como productos y cantidad
-    
-    :param instance: Descripción
-    :param data: Descripción
-    :param usuario: Descripción
-    """
+    @staticmethod
+    @transaction.atomic
+    def actualizar_orden_venta(instance, data, usuario):
 
-    items_data = data.pop("items", None)
-    
-    #Actualizar campos
-    for campo, valor in data.items():
-        setattr(instance, campo, valor)
-    instance.save()
+        items_data = data.pop("items", None)
 
-    if items_data:
-        for item in items_data:
-            producto = item['producto']
-            cantidad = item['cantidad']
-            precio_unitario = item['precio_unitario']
-        
-        obj, created = OrdenItem.objects.get_or_create(
-            orden = instance,
-            producto = producto,
-            defaults={'cantidad': cantidad, 'precio_unitario':precio_unitario}
-        )
-        if not created:
-            #Actualiza cantidad y precio unitario
-            obj.cantidad = cantidad,
-            obj.precio_unitario = precio_unitario,
-            obj.save()
-    
-    #Recalcular total
-    total = Decimal('0')
-    for item in instance.ordenitem_set.all():
-        total += item.cantidad * item.precio_unitario
-    instance.total = total
-    instance.save()
+        # Actualizar campos simples
+        for campo, valor in data.items():
+            setattr(instance, campo, valor)
+        instance.save()
 
-    return instance
+        if items_data:
+            for item in items_data:
+                producto = item['producto']
+                cantidad = item['cantidad']
+                precio_unitario = item['precio_unitario']
+
+                obj, created = OrdenItem.objects.get_or_create(
+                    orden=instance,
+                    producto=producto,
+                    defaults={
+                        'cantidad': cantidad,
+                        'precio_unitario': precio_unitario
+                    }
+                )
+
+                if not created:
+                    obj.cantidad = cantidad
+                    obj.precio_unitario = precio_unitario
+                    obj.save()
+
+        # Recalcular total
+        total = Decimal('0')
+        for item in instance.items.all():
+            total += item.cantidad * item.precio_unitario
+
+        instance.total = total
+        instance.save()
+
+        return instance
+
 

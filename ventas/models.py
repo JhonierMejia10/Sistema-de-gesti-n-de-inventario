@@ -40,7 +40,7 @@ class Orden(models.Model):
         on_delete=models.CASCADE,
         related_name='ordenes_creadas'
     )
-    tipo_venta = models.ForeignKey(
+    tipo_entrega = models.ForeignKey(
         TipoEntrega,
         on_delete=models.CASCADE
     )
