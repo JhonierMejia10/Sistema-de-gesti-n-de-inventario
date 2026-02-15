@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     'productos',
     'ventas',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -58,7 +59,10 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 ROOT_URLCONF = 'gestion_inventarios.urls'
 
@@ -148,7 +152,23 @@ REST_FRAMEWORK = {
         'rest_framework.filters.OrderingFilter',
         'rest_framework.filters.SearchFilter',
     ],
-    'DEFAULT_PAGINATION_CLASS':
-        'rest_framework.pagination.PageNumberPagination',
-        'PAGE_SIZE':5
+    
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
+
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 10,
+
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+    'rest_framework_simplejwt.authentication.JWTAuthentication',
+    ],
+}
+
+from datetime import timedelta
+
+SIMPLE_JWT = {
+    "ACCESSS_TOKEN_LIFETIME": timedelta(minutes=30),
+    "REFRESH_TOKEN_LIFETIME" : timedelta(days=7),
+    "AUTH_HEADER_TYPES": ("Bearer",),
 }

@@ -18,45 +18,13 @@ class OrdenItemSerializer(serializers.ModelSerializer):
         model = OrdenItem
         fields = '__all__'
 
-class OrdenItemWriteSerializer(serializers.Serializer):
-    producto = serializers.PrimaryKeyRelatedField(
-        queryset=Producto.objects.all()
-    )
-    cantidad = serializers.IntegerField(min_value=1)
-    precio_unitario = serializers.DecimalField(
-        max_digits=12,
-        decimal_places=2,
-        min_value=0
-    )
-
 class OrdenSerializer(serializers.ModelSerializer):
-    items = OrdenItemWriteSerializer(many=True, required=False)
     class Meta:
         model = Orden
-        fields = [
-            'id',
-            'cliente',
-            'usuario_creador',
-            'fecha',
-            'estado_pago',
-            'nota',
-            'items',        
-            'total'
-        ]
-        extra_kwargs = {
-            'usuario_creador': {'read_only': True}
-        }
-
-    def update(self, instance, validated_data):
-        usuario = self.context["request"].user
-        return OrdenVentaService.actualizar_orden_venta(
-            instance,
-            validated_data,
-            usuario
-        )
+        fields = '__all__'
 
 
-
+        
 
 """Serializers usados en create"""
 class ItemOrdenVentaSerializer(serializers.Serializer):

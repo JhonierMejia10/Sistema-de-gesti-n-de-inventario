@@ -2,7 +2,7 @@ from .models import EstadoPedido, Pedido, PedidoItem
 from .serializers import EstadoPedidoSerializer, PedidoSerializer, PedidoItemSerializer
 from .permissions import PermitirTodo
 from rest_framework import viewsets, generics
-from rest_framework.permissions import IsAdminUser
+from rest_framework.permissions import IsAdminUser, IsAuthenticated
 
 from rest_framework import viewsets
 # Create your views here.
@@ -10,14 +10,14 @@ from rest_framework import viewsets
 class EstadoPedidoGenericView(generics.ListAPIView):
     queryset = EstadoPedido.objects.all()
     serializer_class = EstadoPedidoSerializer
-    permission_classes = [IsAdminUser]
+    permission_classes = [IsAuthenticated]
 
 class PedidoViewSet(viewsets.ModelViewSet):
     queryset = Pedido.objects.all()
     serializer_class= PedidoSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]
 
 class PedidoItemViewSet(viewsets.ModelViewSet):
     queryset = PedidoItem.objects.all()
     serializer_class = PedidoItemSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]

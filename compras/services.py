@@ -22,7 +22,6 @@ class CompraService:
             subtotal = item['cantidad'] * item['precio_unitario']
             total += subtotal
 
-        #Registrar en el modelo OrdenCompra
         try:
             orden_compra = OrdenCompra.objects.create(
                 estado_compra = estado_compra,
@@ -52,8 +51,6 @@ class CompraService:
             except Exception as e:
                 raise ValidationError(f"Error al registrar producto {producto.nombre}: {str(e)}")
 
-
-            #Si el estado de compra es igual al id = 2, el pedido ha sido recibido por lo tanto se podrá ingresar al inventario (Oportunidad de mejora).
             if estado_compra.id == 2:
                 try:
                     stock, created = Stock.objects.get_or_create(
@@ -61,8 +58,6 @@ class CompraService:
                         almacen = ubicacion_entrega,
                         defaults={'cantidad_en_mano': cantidad}
                     )
-                    
-                    # Manejar saldos según si el stock existía o no
                     if created:
                         saldo_anterior = 0
                         saldo_nuevo = cantidad
@@ -74,7 +69,6 @@ class CompraService:
 
                 except Exception as e:
                     raise ValidationError(f"No se pudo actualizar stock de {producto.nombre}: {str(e)}")
-                #El tipo de movimiento se establece desde el servicio por lo tanto es un registro que depende enteramente del código (Oportunidad de mejora). 
                 try:
                     Movimiento.objects.create(
                         usuario = usuario_creador,
@@ -92,95 +86,95 @@ class CompraService:
                     raise ValidationError(f"Error al registrar movimiento de {producto.nombre}: {str(e)}")
         return orden_compra
     
-    @staticmethod
-    @transaction.atomic
-    def actualizar_orden(instance, data, usuario):
-        """
-        Actualiza campos simples, ítems parcialmente y ejecuta recepción si aplica.
-        """
+    # @staticmethod
+    # @transaction.atomic
+    # def actualizar_orden(instance, data, usuario):
+    #     """
+    #     Actualiza campos simples, ítems parcialmente y ejecuta recepción si aplica.
+    #     """
 
-        estado_anterior = instance.estado_compra_id
-        items_data = data.pop("items", None)
-        items_a_eliminar = data.pop("items_a_eliminar", None)  # lista de ids de items a eliminar
+    #     estado_anterior = instance.estado_compra_id
+    #     items_data = data.pop("items", None)
+    #     items_a_eliminar = data.pop("items_a_eliminar", None)  # lista de ids de items a eliminar
 
-        # --- 1. ACTUALIZAR CAMPOS SIMPLES ---
-        for campo, valor in data.items():
-            setattr(instance, campo, valor)
-        instance.save()
+    #     # --- 1. ACTUALIZAR CAMPOS SIMPLES ---
+    #     for campo, valor in data.items():
+    #         setattr(instance, campo, valor)
+    #     instance.save()
 
-        # --- 2. ELIMINAR ITEMS SI SE INDICA ---
-        if items_a_eliminar:
-            if estado_anterior == 2:
-                raise ValidationError("No se pueden eliminar ítems de una orden ya recibida.")
-            instance.itemordencompra_set.filter(id__in=items_a_eliminar).delete()
+    #     # --- 2. ELIMINAR ITEMS SI SE INDICA ---
+    #     if items_a_eliminar:
+    #         if estado_anterior == 2:
+    #             raise ValidationError("No se pueden eliminar ítems de una orden ya recibida.")
+    #         instance.itemordencompra_set.filter(id__in=items_a_eliminar).delete()
 
-        # --- 3. ACTUALIZACIÓN PARCIAL DE ITEMS ---
-        if items_data:
-            if estado_anterior == 2:
-                raise ValidationError("No se pueden modificar ítems de una orden ya recibida.")
+    #     # --- 3. ACTUALIZACIÓN PARCIAL DE ITEMS ---
+    #     if items_data:
+    #         if estado_anterior == 2:
+    #             raise ValidationError("No se pueden modificar ítems de una orden ya recibida.")
 
-            for item in items_data:
-                producto = item['producto']
-                cantidad = item['cantidad']
-                precio_unitario = item['precio_unitario']
+    #         for item in items_data:
+    #             producto = item['producto']
+    #             cantidad = item['cantidad']
+    #             precio_unitario = item['precio_unitario']
 
-                obj, created = ItemOrdenCompra.objects.get_or_create(
-                    orden_compra=instance,
-                    producto=producto,
-                    defaults={'cantidad': cantidad, 'precio_unitario': precio_unitario}
-                )
+    #             obj, created = ItemOrdenCompra.objects.get_or_create(
+    #                 orden_compra=instance,
+    #                 producto=producto,
+    #                 defaults={'cantidad': cantidad, 'precio_unitario': precio_unitario}
+    #             )
 
-                if not created:
-                    # Actualiza cantidad y precio unitario
-                    obj.cantidad = cantidad
-                    obj.precio_unitario = precio_unitario
-                    obj.save()
+    #             if not created:
+    #                 # Actualiza cantidad y precio unitario
+    #                 obj.cantidad = cantidad
+    #                 obj.precio_unitario = precio_unitario
+    #                 obj.save()
 
-        # --- 4. RECALCULAR TOTAL ---
-        total = Decimal('0')
-        for item in instance.itemordencompra_set.all():
-            total += item.cantidad * item.precio_unitario
-        instance.total = total
-        instance.save()
+    #     # --- 4. RECALCULAR TOTAL ---
+    #     total = Decimal('0')
+    #     for item in instance.itemordencompra_set.all():
+    #         total += item.cantidad * item.precio_unitario
+    #     instance.total = total
+    #     instance.save()
 
-        # --- 5. DETECTAR RECEPCIÓN ---
-        estado_nuevo = instance.estado_compra_id
-        if estado_anterior != 2 and estado_nuevo == 2:
-            CompraService._procesar_recepcion(instance, usuario)
+    #     # --- 5. DETECTAR RECEPCIÓN ---
+    #     estado_nuevo = instance.estado_compra_id
+    #     if estado_anterior != 2 and estado_nuevo == 2:
+    #         CompraService._procesar_recepcion(instance, usuario)
 
-        return instance
+    #     return instance
 
-    @staticmethod
-    def _procesar_recepcion(orden, usuario):
-        """
-        Cuando la orden pasa a estado 2: crear stock y movimientos.
-        """
-        for item in orden.itemordencompra_set.all():
-            producto = item.producto
-            cantidad = item.cantidad
-            almacen = orden.ubicacion_entrega
+    # @staticmethod
+    # def _procesar_recepcion(orden, usuario):
+    #     """
+    #     Cuando la orden pasa a estado 2: crear stock y movimientos.
+    #     """
+    #     for item in orden.itemordencompra_set.all():
+    #         producto = item.producto
+    #         cantidad = item.cantidad
+    #         almacen = orden.ubicacion_entrega
 
-            stock, created = Stock.objects.get_or_create(
-                producto=producto,
-                almacen=almacen,
-                defaults={"cantidad_en_mano": 0}
-            )
+    #         stock, created = Stock.objects.get_or_create(
+    #             producto=producto,
+    #             almacen=almacen,
+    #             defaults={"cantidad_en_mano": 0}
+    #         )
 
-            saldo_anterior = stock.cantidad_en_mano
-            saldo_nuevo = saldo_anterior + cantidad
+    #         saldo_anterior = stock.cantidad_en_mano
+    #         saldo_nuevo = saldo_anterior + cantidad
 
-            stock.cantidad_en_mano = saldo_nuevo
-            stock.save()
+    #         stock.cantidad_en_mano = saldo_nuevo
+    #         stock.save()
 
-            Movimiento.objects.create(
-                usuario=usuario,
-                tipo_movimiento_id=1,  # 1 = Entrada
-                producto=producto,
-                almacen=almacen,
-                cantidad=cantidad,
-                saldo_anterior=saldo_anterior,
-                saldo_nuevo=saldo_nuevo,
-                content_type=ContentType.objects.get_for_model(OrdenCompra),
-                object_id=orden.id,
-                nota=f"Entrada por orden de compra #{orden.id}"
-            )
+    #         Movimiento.objects.create(
+    #             usuario=usuario,
+    #             tipo_movimiento_id=1,  # 1 = Entrada
+    #             producto=producto,
+    #             almacen=almacen,
+    #             cantidad=cantidad,
+    #             saldo_anterior=saldo_anterior,
+    #             saldo_nuevo=saldo_nuevo,
+    #             content_type=ContentType.objects.get_for_model(OrdenCompra),
+    #             object_id=orden.id,
+    #             nota=f"Entrada por orden de compra #{orden.id}"
+    #         )

@@ -6,13 +6,15 @@ from .permissions import PermitirTodo
 from .services import PagoService
 from django.core.exceptions import ValidationError
 
+from rest_framework.permissions import IsAuthenticated
+
 # Create your views here.
 
 
 class PagoVentaViewSet(viewsets.ModelViewSet):
     queryset = PagoVenta.objects.all()
     serializer_class = PagoVentaSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]
 
     def create(self, request, *args, **kwargs):
         """
@@ -40,7 +42,7 @@ class PagoVentaViewSet(viewsets.ModelViewSet):
 class MedioPagoViewSet(viewsets.ModelViewSet):
     queryset = MedioPago.objects.all()
     serializer_class = MedioPagoSerializer
-    permission_classes = [PermitirTodo]  
+    permission_classes = [IsAuthenticated]  
 
 
 

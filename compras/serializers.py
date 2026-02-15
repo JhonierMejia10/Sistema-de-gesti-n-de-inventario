@@ -4,6 +4,8 @@ from productos.models import Producto
 from inventario.models import Almacen
 from .services import CompraService
 
+from django.shortcuts import get_object_or_404
+
 
 class ProveedorSerializer(serializers.ModelSerializer):
     class Meta:
@@ -24,28 +26,21 @@ class EstadoCompraSerializer(serializers.ModelSerializer):
             'nombre':{'required':True}
         }
 
-"""Serializers usados if action is not 'create'"""
+
 class ItemOrdenCompraSerializer(serializers.ModelSerializer):
     class Meta:
         model = ItemOrdenCompra
-        fields = ["id", "producto", "cantidad", "precio_unitario"]
-
+        fields = ["orden_compra","id", "producto", "cantidad", "precio_unitario"]
+        read_only_fields = ['orden_compra']
+    
 
 class OrdenCompraSerializer(serializers.ModelSerializer):
     items = ItemOrdenCompraSerializer(many=True, required=False)
-    items_a_eliminar = serializers.ListField(
-        child=serializers.IntegerField(), required=False, write_only=True
-    )
-
     class Meta:
         model = OrdenCompra
         fields = "__all__"
 
-    def update(self, instance, validated_data):
-        usuario = self.context["request"].user
-        return CompraService.actualizar_orden(instance, validated_data, usuario)
-
-"""Serializers usados if action = 'create'"""
+"""Serializers usados para la creación de una orden de comora"""
 class ItemCompraSerializer(serializers.Serializer):
     producto = serializers.PrimaryKeyRelatedField(
         queryset = Producto.objects.all()
@@ -70,8 +65,4 @@ class CrearCompraSerializer(serializers.Serializer):
     items = ItemCompraSerializer(many=True)
     nota = serializers.CharField(required=False, allow_null=True)
 
-    def validate_items(self, value):
-        if not value:
-            raise serializers.ValidationError("Debes incluir al menos un producto.")
-        return value
     

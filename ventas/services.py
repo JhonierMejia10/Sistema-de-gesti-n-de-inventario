@@ -103,45 +103,45 @@ class OrdenVentaService:
         return orden_venta
     
 
-    @staticmethod
-    @transaction.atomic
-    def actualizar_orden_venta(instance, data, usuario):
+    # @staticmethod
+    # @transaction.atomic
+    # def actualizar_orden_venta(instance, data, usuario):
 
-        items_data = data.pop("items", None)
+    #     items_data = data.pop("items", None)
 
-        # Actualizar campos simples
-        for campo, valor in data.items():
-            setattr(instance, campo, valor)
-        instance.save()
+    #     # Actualizar campos simples
+    #     for campo, valor in data.items():
+    #         setattr(instance, campo, valor)
+    #     instance.save()
 
-        if items_data:
-            for item in items_data:
-                producto = item['producto']
-                cantidad = item['cantidad']
-                precio_unitario = item['precio_unitario']
+    #     if items_data:
+    #         for item in items_data:
+    #             producto = item['producto']
+    #             cantidad = item['cantidad']
+    #             precio_unitario = item['precio_unitario']
 
-                obj, created = OrdenItem.objects.get_or_create(
-                    orden=instance,
-                    producto=producto,
-                    defaults={
-                        'cantidad': cantidad,
-                        'precio_unitario': precio_unitario
-                    }
-                )
+    #             obj, created = OrdenItem.objects.get_or_create(
+    #                 orden=instance,
+    #                 producto=producto,
+    #                 defaults={
+    #                     'cantidad': cantidad,
+    #                     'precio_unitario': precio_unitario
+    #                 }
+    #             )
 
-                if not created:
-                    obj.cantidad = cantidad
-                    obj.precio_unitario = precio_unitario
-                    obj.save()
+    #             if not created:
+    #                 obj.cantidad = cantidad
+    #                 obj.precio_unitario = precio_unitario
+    #                 obj.save()
 
-        # Recalcular total
-        total = Decimal('0')
-        for item in instance.items.all():
-            total += item.cantidad * item.precio_unitario
+    #     # Recalcular total
+    #     total = Decimal('0')
+    #     for item in instance.items.all():
+    #         total += item.cantidad * item.precio_unitario
 
-        instance.total = total
-        instance.save()
+    #     instance.total = total
+    #     instance.save()
 
-        return instance
+    #     return instance
 
 

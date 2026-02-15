@@ -6,23 +6,23 @@ from .permissions import PermitirTodo
 from .services import ProductosService
 from rest_framework import viewsets, status
 from rest_framework.views import APIView
-# Create your views here.
 
+from rest_framework.permissions import IsAuthenticated
 
 class TipoProductoViewSet(viewsets.ModelViewSet):
     queryset = TipoProducto.objects.all()
     serializer_class = TipoProductoSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]
 
 class MarcaViewSet(viewsets.ModelViewSet):
     queryset = Marca.objects.all()
     serializer_class = MarcaSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]
 
 class ProductoViewSet(viewsets.ModelViewSet):
     queryset = Producto.objects.all()
     serializer_class = ProductoSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == 'create':

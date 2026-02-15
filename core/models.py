@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.text import slugify
 
+
 # Create your models here.
 class EstadoPago(models.Model):
     nombre = models.CharField(max_length=255, blank=False, null=False, unique=True)
@@ -35,3 +36,4 @@ class EstadoPago(models.Model):
         if self.descripcion is None or self.descripcion.strip() == "":
             return f"Estado de pago: {self.nombre} - Sin descripción"
         return f"Estado de pago: {self.nombre} - Descripción: {self.descripcion}"
+    

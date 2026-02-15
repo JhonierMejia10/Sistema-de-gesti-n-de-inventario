@@ -6,7 +6,6 @@ from django.utils.text import slugify
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from decimal import Decimal
-# Create your models here.
 
 class Proveedor(models.Model):
     nombre = models.CharField(max_length=100)
@@ -50,7 +49,8 @@ class OrdenCompra(models.Model):
     )
     usuario_creador = models.ForeignKey(
         User,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='ordenes_compra_creadas'
     )
     proveedor = models.ForeignKey(
         Proveedor,
@@ -89,7 +89,8 @@ class OrdenCompra(models.Model):
 class ItemOrdenCompra(models.Model):
     orden_compra = models.ForeignKey(
         OrdenCompra,
-        on_delete=models.CASCADE
+        on_delete=models.CASCADE,
+        related_name='items'
     )
     producto = models.ForeignKey(
         Producto,
@@ -103,3 +104,6 @@ class ItemOrdenCompra(models.Model):
     
     def __str__(self):
         return f"{self.producto.nombre} x {self.cantidad} "
+    
+    class Meta:
+        unique_together = ('orden_compra', 'producto')

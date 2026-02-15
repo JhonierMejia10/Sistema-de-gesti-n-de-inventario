@@ -3,6 +3,7 @@ from rest_framework import status
 from rest_framework.validators import ValidationError
 from django.contrib.auth.models import User
 from rest_framework.response import Response
+from rest_framework.permissions import IsAuthenticated
 
 from .models import Proveedor, EstadoCompra, OrdenCompra, ItemOrdenCompra
 from .serializers import ProveedorSerializer, EstadoCompraSerializer, OrdenCompraSerializer, ItemOrdenCompraSerializer, CrearCompraSerializer
@@ -15,17 +16,17 @@ class ProveedorViewSet(viewsets.ModelViewSet):
     queryset = Proveedor.objects.all()
     serializer_class = ProveedorSerializer
     lookup_field = 'slug'
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]
 
 class EstadoCompraViewSet(viewsets.ModelViewSet):
     queryset = EstadoCompra.objects.all()
     serializer_class = EstadoCompraSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]
 
 class OrdenCompraViewSet(viewsets.ModelViewSet):
     queryset = OrdenCompra.objects.all()
     serializer_class = OrdenCompraSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
         if self.action == 'create':
@@ -56,6 +57,7 @@ class OrdenCompraViewSet(viewsets.ModelViewSet):
         return Response(orden_serializer.data, status=status.HTTP_201_CREATED)
     
 class ItemOrdenCompraViewSet(viewsets.ModelViewSet):
-    queryset = ItemOrdenCompra.objects.all()
     serializer_class = ItemOrdenCompraSerializer
-    permission_classes = [PermitirTodo]
+    permission_classes = [IsAuthenticated]
+    queryset = ItemOrdenCompra.objects.all()
+    
