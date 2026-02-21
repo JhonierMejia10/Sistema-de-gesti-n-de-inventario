@@ -20,7 +20,7 @@ class EstadoPagoViewSet(viewsets.ModelViewSet):
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]
 
 class DashboardAPIView(APIView):
     permission_classes = [IsAuthenticated]
