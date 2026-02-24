@@ -19,10 +19,21 @@ class OrdenItemSerializer(serializers.ModelSerializer):
         fields = '__all__'
 
 class OrdenSerializer(serializers.ModelSerializer):
+    cliente_nombre = serializers.CharField(source='cliente.nombre', read_only=True)
+    estado_pago_nombre = serializers.CharField(source='estado_pago.nombre', read_only=True)
+    items = OrdenItemSerializer(many=True, read_only=True)
+    total_pagado = serializers.SerializerMethodField()
+    saldo_pendiente = serializers.SerializerMethodField()
+
     class Meta:
         model = Orden
         fields = '__all__'
 
+    def get_total_pagado(self, obj):
+        return obj.total_pagado()
+
+    def get_saldo_pendiente(self, obj):
+        return obj.saldo_pendiente()
 
         
 

@@ -1,9 +1,9 @@
 from django.db import transaction
 from django.core.exceptions import ValidationError
-from rest_framework import status
 from .models import Producto
 from inventario.models import Stock
 from almacenes.models import Almacen
+from django.db import IntegrityError
 
 
 class ProductosService:
@@ -23,8 +23,8 @@ class ProductosService:
                 tipo_producto=tipo_producto,
                 nota=nota
             )
-        except:
-            raise ValidationError({'error':"No se pudo crear el producto. Compruebe los datos ingresados."}, status=status.HTTP_400_BAD_REQUEST)
+        except IntegrityError:
+            raise ValidationError("Ya existe un producto con ese nombre.")
 
         try:
             stock_inicial = Stock.objects.create(
@@ -32,7 +32,7 @@ class ProductosService:
                 almacen=almacen,
                 cantidad_en_mano=stock_inicial
             )
-        except:
-            raise ValidationError("Error, no se pudo crear el registro de stock inicial.")
+        except IntegrityError:
+            raise ValidationError("Ya existe un registro de stock para ese producto y almacén.")
         return producto
 

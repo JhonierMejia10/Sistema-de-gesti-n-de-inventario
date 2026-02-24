@@ -19,3 +19,9 @@ __pycache__/
 
 # Ignorar archivos de entorno
 .env
+
+# Ignorar carpeta de frontend
+node_modules/
+frontend/dist/
+frontend/node_modules/
+frontend/.vite/

@@ -1,11 +1,9 @@
 from rest_framework import viewsets, status
 from rest_framework.response import Response
-from .models import  MedioPago, PagoVenta, PagoCompra
-from .serializers import MedioPagoSerializer,  PagoVentaSerializer
-from .permissions import PermitirTodo
+from .models import MedioPago, PagoVenta, PagoCompra
+from .serializers import MedioPagoSerializer, PagoVentaSerializer, PagoCompraSerializer
 from .services import PagoService
 from django.core.exceptions import ValidationError
-
 from rest_framework.permissions import IsAuthenticated
 
 # Create your views here.
@@ -24,13 +22,12 @@ class PagoVentaViewSet(viewsets.ModelViewSet):
         serializer.is_valid(raise_exception=True)
 
         try:
-            service = PagoService()
-            pago = service.registrar_pago_venta(
+            pago = PagoService.registrar_pago_venta(
                 orden=serializer.validated_data['orden'],
                 monto=serializer.validated_data['monto'],
                 metodo_pago=serializer.validated_data['metodo_pago'],
                 usuario=request.user,
-                nota=serializer.validated_data.get('nota','')
+                nota=serializer.validated_data.get('nota', '')
             )
 
             output_serializer = self.get_serializer(pago)
@@ -44,7 +41,29 @@ class MedioPagoViewSet(viewsets.ModelViewSet):
     serializer_class = MedioPagoSerializer
     permission_classes = [IsAuthenticated]  
 
+class PagoCompraViewSet(viewsets.ModelViewSet):
+    queryset = PagoCompra.objects.all()
+    serializer_class = PagoCompraSerializer
+    permission_classes = [IsAuthenticated]
 
+    def create(self, request, *args, **kwargs):
+        """
+        Sobrescribir create para usar el servicio de compras
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
 
+        try:
+            pago = PagoService.registrar_pago_compra(
+                orden_compra=serializer.validated_data['orden_compra'],
+                monto=serializer.validated_data['monto'],
+                metodo_pago=serializer.validated_data['metodo_pago'],
+                usuario=request.user,
+                nota=serializer.validated_data.get('nota', '')
+            )
 
-
+            output_serializer = self.get_serializer(pago)
+            return Response(output_serializer.data, status=status.HTTP_201_CREATED)
+        
+        except ValidationError as e:
+            return Response({'error' : str(e)}, status=status.HTTP_400_BAD_REQUEST)

@@ -44,17 +44,6 @@ class PagoVenta(models.Model):
         ordering = ['-fecha']
         verbose_name = 'Pago de venta'
         verbose_name_plural = 'Pagos de venta'
-    
-    def clean(self):
-        if self.monto <= Decimal('0'):
-            raise ValidationError("El monto debe ser mayor a cero")
-        
-        if self.monto > self.orden.saldo_pendiente():
-            raise ValidationError(f"El pago excede el saldo pendiente: ${self.orden.saldo_pendiente()}")
-        
-    def save(self, *args, **kwargs):
-        self.full_clean()
-        super().save(*args, **kwargs)
 
     def __str__(self):
         return f"Pago #{self.id} - Monto: {self.monto}"

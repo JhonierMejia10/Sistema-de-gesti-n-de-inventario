@@ -9,6 +9,9 @@ class MedioPagoSerializer(serializers.ModelSerializer):
 class PagoVentaSerializer(serializers.ModelSerializer):
     class Meta:
         model = PagoVenta
-        fields = ['orden','metodo_pago','fecha','monto']
-        read_only = ['orden']
-    
+        fields = ['id', 'orden', 'metodo_pago', 'fecha', 'monto', 'nota']
+
+class PagoCompraSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = PagoCompra
+        fields = ['id', 'orden_compra', 'metodo_pago', 'fecha', 'monto', 'nota']

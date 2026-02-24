@@ -1,11 +1,7 @@
 from rest_framework import serializers
 from .models import Proveedor, EstadoCompra, OrdenCompra, ItemOrdenCompra
 from productos.models import Producto
-from inventario.models import Almacen
-from .services import CompraService
-
-from django.shortcuts import get_object_or_404
-
+from almacenes.models import Almacen
 
 class ProveedorSerializer(serializers.ModelSerializer):
     class Meta:

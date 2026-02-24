@@ -5,7 +5,7 @@ from .models import Cliente, TipoCliente
 class TipoClienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoCliente
-        fields = ['nombre','descripcion']
+        fields = ['id', 'nombre', 'descripcion']
 
         extra_kwargs = {
             'id':{'read_only':True}

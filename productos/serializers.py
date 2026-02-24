@@ -14,12 +14,12 @@ class TipoProductoSerializer(serializers.ModelSerializer):
 class MarcaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Marca
-        fields = ['nombre']
+        fields = '__all__'
 
 class CrearProductoSerializer(serializers.Serializer):
     """Serializer específico para crear nuevo producto"""
     nombre = serializers.CharField(required=True, allow_null=False)
-    descripcion = serializers.CharField(required=False)
+    descripcion = serializers.CharField(required=False, allow_blank=True, allow_null=True)
     precio = serializers.DecimalField(max_digits=12, decimal_places=2, min_value=0 ,allow_null=False)
     foto = serializers.ImageField(required=False)
     categoria = serializers.PrimaryKeyRelatedField(
@@ -28,13 +28,14 @@ class CrearProductoSerializer(serializers.Serializer):
     )
     marca = serializers.PrimaryKeyRelatedField(
         queryset = Marca.objects.all(), 
-        required=False
+        required=False,
+        allow_null=True
     )
     tipo_producto = serializers.PrimaryKeyRelatedField(
         queryset = TipoProducto.objects.all(), 
         required=True
     )
-    nota = serializers.CharField(required=False, allow_null=True, max_length=None)
+    nota = serializers.CharField(required=False, allow_null=True, allow_blank=True, max_length=None)
     stock_inicial = serializers.IntegerField(min_value=0, required=True)
     almacen = serializers.PrimaryKeyRelatedField(
         queryset = Almacen.objects.all(),
@@ -50,9 +51,9 @@ class ProductoSerializer(serializers.ModelSerializer):
 class TipoAtrubutoProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = TipoAtributoProducto
-        fields = ['nombre']
+        fields = '__all__'
 
 class AtributoProductoSerializer(serializers.ModelSerializer):
     class Meta:
         model = AtributoProducto
-        fields = ['producto','tipo_atributo','valor']
+        fields = '__all__'

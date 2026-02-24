@@ -5,8 +5,8 @@ from django.contrib.auth.models import User
 class EstadoPagoSerializer(serializers.ModelSerializer):    
     class Meta:
         model = EstadoPago
-        fields = ['nombre','descripcion']
-        only_read_fields = ['id']
+        fields = ['id', 'nombre','descripcion']
+        read_only_fields = ['id']
     
 class UserSerializer(serializers.ModelSerializer):
     class Meta:

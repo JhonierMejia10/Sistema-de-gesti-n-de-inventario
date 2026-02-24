@@ -10,7 +10,7 @@ class UbicacionSerializer(serializers.ModelSerializer):
 class AlmacenSerializer(serializers.ModelSerializer):
     class Meta:
         model = Almacen
-        fields = ['nombre','ubicacion','descripcion']
+        fields = '__all__'
     
     def to_representation(self, instance):
         representation = super().to_representation(instance)

@@ -2,7 +2,7 @@ from django.db import models
 from clientes.models import Cliente
 from productos.models import Producto
 from core.models import EstadoPago
-from inventario.models import Almacen
+from almacenes.models import Almacen
 from django.contrib.auth.models import User
 from django.db.models import Sum
 from decimal import Decimal
@@ -24,25 +24,24 @@ class Orden(models.Model):
     )
     almacen = models.ForeignKey(
         Almacen,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         blank=False,
         null=False,
-        default=1
     )
     cliente = models.ForeignKey(
         Cliente,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         null=True,
         blank=True
     )
     usuario_creador = models.ForeignKey(
         User,
-        on_delete=models.CASCADE,
+        on_delete=models.PROTECT,
         related_name='ordenes_creadas'
     )
     tipo_entrega = models.ForeignKey(
         TipoEntrega,
-        on_delete=models.CASCADE
+        on_delete=models.PROTECT
     )
     total = models.DecimalField(default=0, max_digits=12, decimal_places=2)
     fecha = models.DateField(db_index=True, auto_now_add=True)

@@ -1,11 +1,9 @@
-from django.db import transaction
+from django.db import transaction, IntegrityError
 from django.contrib.contenttypes.models import ContentType
 from django.core.exceptions import ValidationError
-from .models import OrdenCompra
-from .models import ItemOrdenCompra
+from .models import OrdenCompra, ItemOrdenCompra
 from inventario.models import Movimiento, Stock
 from core.models import EstadoPago
-
 from decimal import Decimal
 
 class CompraService:
@@ -13,6 +11,7 @@ class CompraService:
     @staticmethod
     @transaction.atomic
     def crear_compra_service(ubicacion_entrega, proveedor, estado_compra, items, usuario_creador ,nota=None):
+        from inventario.models import TipoMovimiento
 
         if not items or len(items) == 0:
             raise ValidationError("Debe incluir al menos un producto en la orden.")
@@ -32,58 +31,99 @@ class CompraService:
                 total = total,
                 usuario_creador = usuario_creador
             )
-        except Exception as e:
-            raise ValidationError(f"No se pudo crear la orden compra: {str(e)}")
+        except IntegrityError:
+            raise ValidationError("Ya existe una orden de compra con esos datos.")
+
+        # Manejador Bulk de Items y Stocks
+        productos_ids = [item['producto'].id for item in items]
         
+        # Bloqueamos los stocks existentes
+        stocks_existentes = Stock.objects.select_for_update().filter(
+            producto_id__in=productos_ids, 
+            almacen=ubicacion_entrega
+        )
+        stock_dict = {stock.producto_id: stock for stock in stocks_existentes}
+
+        items_a_crear = []
+        movimientos_a_crear = []
+        stocks_a_actualizar = []
+        stocks_a_crear = []
+        
+        content_type_orden = ContentType.objects.get_for_model(OrdenCompra)
+
         for item in items:
             producto = item['producto']
             cantidad = item['cantidad']
             precio_unitario = item['precio_unitario']
 
-            #Registrar en el modelo ItemOrdenCompra
-            try: 
-                ItemOrdenCompra.objects.create(
-                orden_compra = orden_compra,
-                producto = producto,
-                cantidad = cantidad,
-                precio_unitario = precio_unitario
+            items_a_crear.append(
+                ItemOrdenCompra(
+                    orden_compra=orden_compra,
+                    producto=producto,
+                    cantidad=cantidad,
+                    precio_unitario=precio_unitario
                 )
-            except Exception as e:
-                raise ValidationError(f"Error al registrar producto {producto.nombre}: {str(e)}")
+            )
 
-            if estado_compra.id == 2:
-                try:
-                    stock, created = Stock.objects.get_or_create(
-                        producto = producto,
-                        almacen = ubicacion_entrega,
-                        defaults={'cantidad_en_mano': cantidad}
+            if estado_compra.nombre == 'Recibido':
+                if producto.id in stock_dict:
+                    # El stock ya existe, lo actualizamos
+                    stock = stock_dict[producto.id]
+                    saldo_anterior = stock.cantidad_en_mano
+                    stock.cantidad_en_mano += cantidad
+                    stocks_a_actualizar.append(stock)
+                    saldo_nuevo = stock.cantidad_en_mano
+                else:
+                    # El stock no existe, debemos crearlo tras revisar que otro proceso no lo haya creado
+                    # Usamos un try except para manejar la concurrencia a nivel de BD o lo encolamos para el bulk
+                    saldo_anterior = 0
+                    saldo_nuevo = cantidad
+                    stocks_a_crear.append(
+                        Stock(
+                            producto=producto,
+                            almacen=ubicacion_entrega,
+                            cantidad_en_mano=cantidad
+                        )
                     )
-                    if created:
-                        saldo_anterior = 0
-                        saldo_nuevo = cantidad
-                    else:
-                        saldo_anterior = stock.cantidad_en_mano
-                        stock.cantidad_en_mano += cantidad
-                        stock.save()
-                        saldo_nuevo = stock.cantidad_en_mano
 
-                except Exception as e:
-                    raise ValidationError(f"No se pudo actualizar stock de {producto.nombre}: {str(e)}")
-                try:
-                    Movimiento.objects.create(
-                        usuario = usuario_creador,
-                        tipo_movimiento_id = 1,
-                        producto = producto,
-                        almacen = ubicacion_entrega,
-                        cantidad = cantidad,
-                        saldo_anterior = saldo_anterior,
-                        saldo_nuevo = saldo_nuevo,
-                        content_type = ContentType.objects.get_for_model(OrdenCompra),  
-                        object_id = orden_compra.id,
-                        nota = f"Entrada por orden de compra #{orden_compra.id}"
+                movimientos_a_crear.append(
+                    Movimiento(
+                        usuario=usuario_creador,
+                        tipo_movimiento_id=TipoMovimiento.ENTRADA,
+                        producto=producto,
+                        almacen=ubicacion_entrega,
+                        cantidad=cantidad,
+                        saldo_anterior=saldo_anterior,
+                        saldo_nuevo=saldo_nuevo,
+                        content_type=content_type_orden,
+                        object_id=orden_compra.id,
+                        nota=f"Entrada por orden de compra #{orden_compra.id}"
                     )
-                except Exception as e:
-                    raise ValidationError(f"Error al registrar movimiento de {producto.nombre}: {str(e)}")
+                )
+
+        try:
+            ItemOrdenCompra.objects.bulk_create(items_a_crear)
+        except IntegrityError:
+             raise ValidationError("Error al registrar los ítems. Posibles productos duplicados en la orden.")
+
+        if estado_compra.nombre == 'Recibido':
+            if stocks_a_actualizar:
+                Stock.objects.bulk_update(stocks_a_actualizar, ['cantidad_en_mano'])
+            
+            if stocks_a_crear:
+                # Si dos usuarios intentan recibir el mismo producto nuevo simultáneamente, bulk_create o el save fallará por Unique Constraint
+                # Para mayor robustez en alta concurrencia usamos ignore_conflicts
+                try:
+                    Stock.objects.bulk_create(stocks_a_crear)
+                except IntegrityError:
+                    # En una arquitectura multi-hilo exacta aquí se podría re-correr la validación
+                     raise ValidationError("Error de concurrencia creando stock inicial. Por favor, reintente la orden.")
+            
+            try:
+                Movimiento.objects.bulk_create(movimientos_a_crear)
+            except IntegrityError:
+                raise ValidationError("Error al registrar los movimientos de inventario.")
+
         return orden_compra
     
     # @staticmethod

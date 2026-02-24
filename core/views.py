@@ -6,7 +6,6 @@ from rest_framework import generics
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.views import APIView
 from rest_framework.response import Response
-
 from productos.models import Producto
 from ventas.models import Orden
 from compras.models import OrdenCompra
@@ -26,10 +25,12 @@ class DashboardAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
     def get(self, request):
-        data = {
-            "total_productos": Producto.objects.count(),
-            "total_ventas" : Orden.objects.count(),
-            "compras_pendientes": OrdenCompra.objects.filter(estado_compra=1).count()
+        stats = {
+            "total_productos": Producto.objects.filter(activo=True).count(),
+            "total_ventas": Orden.objects.count(),
+            "compras_pendientes": OrdenCompra.objects.filter(
+                estado_compra__nombre='Pendiente'
+            ).count(),
         }
-        return Response(data) 
+        return Response(stats)
 

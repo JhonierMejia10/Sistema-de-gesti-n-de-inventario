@@ -23,14 +23,14 @@ class Stock(models.Model):
 
     class Meta:
         unique_together = ['producto','almacen']
-        indexes = [
-            models.Index(fields=['producto','almacen'])
-        ]
 
     def __str__(self):
-        return f"Producto: {self.producto.nombre} - Almacen: {self.almacen.nombre_almacen} - Cantidad: {self.cantidad_en_mano} unidades"
+        return f"Producto: {self.producto.nombre} - Almacen: {self.almacen.nombre} - Cantidad: {self.cantidad_en_mano} unidades"
 
 class TipoMovimiento(models.Model):
+    ENTRADA = 1
+    SALIDA = 2
+
     nombre = models.CharField(max_length=255, db_index=True, unique=True, blank=False, null=False)
     descripcion = models.TextField(blank=True, null=True)
 
@@ -76,7 +76,7 @@ class Movimiento(models.Model):
     nota = models.TextField(blank=True, null=True)
 
     class Meta:
-        ordering = ['fecha_creacion']
+        ordering = ['-fecha_creacion']
         indexes = [
             models.Index(fields=['producto','-fecha_creacion']),
             models.Index(fields=['tipo_movimiento','-fecha_creacion']),

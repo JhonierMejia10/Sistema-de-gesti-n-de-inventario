@@ -8,6 +8,5 @@ from rest_framework.permissions import IsAuthenticated
 class CategoriaViewSet(viewsets.ModelViewSet):
     queryset = Categoria.objects.all()
     serializer_class = CategoriaSerializer
-    lookup_field = 'slug'
     permission_classes = [IsAuthenticated]    
 

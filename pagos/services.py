@@ -1,7 +1,7 @@
 from django.db import transaction
 from django.core.exceptions import ValidationError
 from ventas.models import Orden
-from .models import PagoVenta
+from .models import PagoVenta, PagoCompra
 from compras.models import OrdenCompra
 
 class PagoService:
@@ -44,7 +44,7 @@ class PagoService:
         if monto > orden_compra.saldo_pendiente():
             raise ValidationError(f"El pago excede el saldo. Disponible: ${orden_compra.saldo_pendiente()}")
         
-        pago = OrdenCompra.objects.create(
+        pago = PagoCompra.objects.create(
             orden_compra=orden_compra,
             monto=monto,
             metodo_pago=metodo_pago,
