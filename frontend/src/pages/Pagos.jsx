@@ -250,8 +250,8 @@ export default function Pagos() {
                                 className="w-full bg-[#1a1a1a] border border-[#27272a] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#10b981] subtle-transition"
                             >
                                 <option value="" disabled>-- Seleccionar Orden --</option>
-                                {ordenesVenta.map(ov => (
-                                    <option key={ov.id} value={ov.id}>Orden #{ov.id} ({ov.cliente ? (ov.cliente.nombre || ov.cliente) : 'Sin Cliente'})</option>
+                                {ordenesVenta.map((ov, i) => (
+                                    <option key={ov.id || i} value={ov.id}>Orden #{ov.id} ({ov.cliente ? (ov.cliente.nombre || ov.cliente) : 'Sin Cliente'})</option>
                                 ))}
                             </select>
                         </div>
@@ -266,8 +266,8 @@ export default function Pagos() {
                                 className="w-full bg-[#1a1a1a] border border-[#27272a] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#10b981] subtle-transition"
                             >
                                 <option value="" disabled>-- Seleccionar Orden --</option>
-                                {ordenesCompra.map(oc => (
-                                    <option key={oc.id} value={oc.id}>Compra #{oc.id} ({oc.proveedor ? (oc.proveedor.nombre || oc.proveedor) : 'Sin Proveedor'})</option>
+                                {ordenesCompra.map((oc, i) => (
+                                    <option key={oc.id || i} value={oc.id}>Compra #{oc.id} ({oc.proveedor ? (oc.proveedor.nombre || oc.proveedor) : 'Sin Proveedor'})</option>
                                 ))}
                             </select>
                         </div>
@@ -297,8 +297,8 @@ export default function Pagos() {
                             className="w-full bg-[#1a1a1a] border border-[#27272a] rounded-lg px-4 py-2 text-white focus:outline-none focus:border-[#10b981] subtle-transition"
                         >
                             <option value="" disabled>-- Seleccionar Método --</option>
-                            {mediosPago.map(mp => (
-                                <option key={mp.id} value={mp.id}>{mp.nombre}</option>
+                            {mediosPago.map((mp, i) => (
+                                <option key={mp.id || i} value={mp.id}>{mp.nombre}</option>
                             ))}
                         </select>
                     </div>

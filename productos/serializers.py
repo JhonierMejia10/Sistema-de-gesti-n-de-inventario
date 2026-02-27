@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from categorias.models import Categoria
 from compras.models import Proveedor
-from .models import TipoProducto, Marca, Producto, TipoAtributoProducto, AtributoProducto
+from .models import TipoProducto, Marca, Producto
 from inventario.models import Stock
 from almacenes.models import Almacen
 from categorias.models import Categoria
@@ -48,12 +48,3 @@ class ProductoSerializer(serializers.ModelSerializer):
         fields = '__all__'
         read_only_fields = ['id','fecha_creacion']
 
-class TipoAtrubutoProductoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TipoAtributoProducto
-        fields = '__all__'
-
-class AtributoProductoSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = AtributoProducto
-        fields = '__all__'

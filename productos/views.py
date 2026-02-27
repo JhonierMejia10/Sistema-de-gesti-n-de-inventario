@@ -1,7 +1,7 @@
 from django.shortcuts import render
 from rest_framework.response import Response
-from .models import TipoProducto, Marca, Producto, TipoAtributoProducto, AtributoProducto
-from .serializers import TipoProductoSerializer, MarcaSerializer ,CrearProductoSerializer , ProductoSerializer, TipoAtrubutoProductoSerializer, AtributoProductoSerializer
+from .models import TipoProducto, Marca, Producto
+from .serializers import TipoProductoSerializer, MarcaSerializer ,CrearProductoSerializer , ProductoSerializer
 from .permissions import PermitirTodo
 from .services import ProductosService
 from rest_framework import viewsets, status

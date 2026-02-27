@@ -22,15 +22,9 @@ export default function Movimientos() {
 
     return (
         <div className="text-white space-y-6 animate-in fade-in duration-500">
-            <div className="flex justify-between items-start">
-                <div>
-                    <h1 className="text-3xl font-bold tracking-tight mb-2">Movimientos</h1>
-                    <p className="text-[#a1a1aa]">Registro histórico de entradas y salidas</p>
-                </div>
-                <button className="bg-[#10b981] hover:bg-[#059669] text-white px-4 py-2 rounded-lg font-medium subtle-transition flex items-center gap-2">
-                    <Plus className="w-4 h-4" strokeWidth={3} />
-                    Registrar Movimiento
-                </button>
+            <div className="mb-6">
+                <h1 className="text-3xl font-bold tracking-tight mb-2">Movimientos</h1>
+                <p className="text-[#a1a1aa]">Registro histórico de entradas y salidas</p>
             </div>
 
             <div className="bg-[var(--color-bg-card)] border border-[var(--color-border-subtle)] rounded-xl overflow-hidden">

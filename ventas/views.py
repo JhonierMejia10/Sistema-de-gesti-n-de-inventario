@@ -23,7 +23,7 @@ class OrdenVentaViewSet(viewsets.ModelViewSet):
     permission_classes = [IsAuthenticated]
 
     def get_serializer_class(self):
-        if self.action == 'create':
+        if self.action in ['create', 'update', 'partial_update']:
             return CrearOrdenVentaSerializer
         return OrdenSerializer
     
@@ -49,6 +49,53 @@ class OrdenVentaViewSet(viewsets.ModelViewSet):
             )
         ordenVenta_serializer = OrdenSerializer(ordenVenta)
         return Response(ordenVenta_serializer.data, status=status.HTTP_201_CREATED)
+
+    def update(self, request, *args, **kwargs):
+        # partial=True permite PATCH (campos opcionales), partial=False obliga PUT
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        
+        # Usamos el mismo serializer de creación para validar la estructura de entrada
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        data = serializer.validated_data
+        
+        # En caso de PATCH, recuperamos los valores actuales si no vienen en el request
+        almacen = data.get('almacen', instance.almacen)
+        estado_pago = data.get('estado_pago', instance.estado_pago)
+        cliente = data.get('cliente', instance.cliente)
+        tipo_entrega = data.get('tipo_entrega', instance.tipo_entrega)
+        nota = data.get('nota', instance.nota)
+        items = data.get('items', None)
+        
+        if items is None:
+            # Si en un PATCH no enviaron items, no actualizamos esa parte.
+            # En un PUT normal 'items' es requerido por el serializer.
+            # Para este diseño, forzamos requerir los items para poder calcular todo
+            return Response(
+                {'error': 'Se requiere proporcionar los items de la orden para actualizarla.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        try:
+            ordenActualizada = OrdenVentaService.actualizar_orden_venta_service(
+                orden_id=instance.id,
+                almacen=almacen,
+                estado_pago=estado_pago,
+                cliente=cliente,
+                usuario_modificador=request.user,
+                tipo_entrega=tipo_entrega,
+                items=items,
+                nota=nota
+            )
+        except ValidationError as e:
+            return Response(
+                {'error': str(e)},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+            
+        orden_serializer = OrdenSerializer(ordenActualizada)
+        return Response(orden_serializer.data, status=status.HTTP_200_OK)
         
  
 #Endpoint viewset para los items de las ordenes

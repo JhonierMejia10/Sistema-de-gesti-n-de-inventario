@@ -44,26 +44,3 @@ class Producto(models.Model):
     def __str__(self):
         return self.nombre
 
-#Lógica para agregar caracteristicas a los productos (no se usará para la primera versión de la aplicación)
-class TipoAtributoProducto(models.Model):
-    nombre = models.CharField(max_length=255, unique=True, db_index=True, blank=False, null=False)
-    descripcion = models.TextField(blank=True, null=True)
-
-    def __str__(self):
-        return self.nombre
-
-class AtributoProducto(models.Model):
-    producto = models.ForeignKey(
-        Producto,
-        on_delete=models.CASCADE
-    )
-    tipo_atributo = models.ForeignKey(
-        TipoAtributoProducto,
-        on_delete=models.CASCADE
-    )
-    valor = models.CharField(max_length=255, null=True, blank=True)
-
-    def __str__(self):
-        return f"{self.producto.nombre} - {self.tipo_atributo.nombre}: {self.valor}"
-
-

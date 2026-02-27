@@ -15,7 +15,6 @@ from .services import CompraService
 class ProveedorViewSet(viewsets.ModelViewSet):
     queryset = Proveedor.objects.all()
     serializer_class = ProveedorSerializer
-    lookup_field = 'slug'
     permission_classes = [IsAuthenticated]
 
 class EstadoCompraViewSet(viewsets.ModelViewSet):

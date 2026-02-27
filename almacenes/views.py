@@ -14,5 +14,4 @@ class UbicacionViewSet(viewsets.ModelViewSet):
 class AlmacenViewSet(viewsets.ModelViewSet):
     queryset = Almacen.objects.all()
     serializer_class = AlmacenSerializer
-    lookup_field = 'slug'
     permission_classes = [IsAuthenticated]
